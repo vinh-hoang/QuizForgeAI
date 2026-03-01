@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
 @ActiveProfiles("test")
-class QuizPersistenceServiceTest {
+class QuizPersistenceServiceIT {
 
     @Autowired
     lateinit var quizPersistenceService: QuizPersistenceService
@@ -50,4 +50,3 @@ class QuizPersistenceServiceTest {
         assertEquals(quiz.questions, loaded.questions)
     }
 }
-

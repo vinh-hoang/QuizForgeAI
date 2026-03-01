@@ -1,4 +1,4 @@
-package ai.quiz.forge.persistence.entity
+package ai.quiz.forge.persistence.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -14,7 +14,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "question")
-data class QuestionEntity(
+class QuestionEntity(
     @Id
     @GeneratedValue
     val id: UUID? = null,
@@ -39,12 +39,16 @@ data class QuestionEntity(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "correct_answer")
-    val correctAnswer: CorrectAnswer,
+    val correctAnswer: Answer,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "selected_answer")
+    val selectedAnswer: Answer? = null,
 
     val hint: String,
     val position: Int,
 ) {
-    enum class CorrectAnswer {
+    enum class Answer {
         OPTION_A,
         OPTION_B,
         OPTION_C,
