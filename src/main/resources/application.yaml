@@ -13,3 +13,12 @@ spring:
     username: user
     password: password
     driver-class-name: org.postgresql.Driver
+
+logging:
+  level:
+    org:
+      springframework:
+        ai:
+          chat:
+            client:
+              advisor: DEBUG
