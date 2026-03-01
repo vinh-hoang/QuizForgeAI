@@ -2,13 +2,14 @@ spring:
   application:
     name: quiz-forge-ai
   ai:
-    ollama:
-      base-url: http://localhost:11434
+    openai:
       chat:
+        base-url: http://localhost:11434
         options:
           model: qwen3:8b
+      api-key: "your-api-key"
   datasource:
     url: jdbc:postgresql://localhost:5432/ai_project
-    username: ai_user
-    password: ai_password
+    username: user
+    password: password
     driver-class-name: org.postgresql.Driver

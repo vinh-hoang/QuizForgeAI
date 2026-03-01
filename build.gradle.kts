@@ -1,6 +1,6 @@
 plugins {
 	kotlin("jvm") version "2.3.10"
-	kotlin("plugin.spring") version "2.2.21"
+	kotlin("plugin.spring") version "2.3.10"
 	id("org.springframework.boot") version "4.0.3"
 	id("io.spring.dependency-management") version "1.1.7"
 }
@@ -25,7 +25,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springframework.ai:spring-ai-advisors-vector-store")
-	implementation("org.springframework.ai:spring-ai-starter-model-ollama")
+	implementation("org.springframework.ai:spring-ai-starter-model-openai")
 	implementation("org.springframework.ai:spring-ai-starter-vector-store-pgvector")
 	implementation("tools.jackson.module:jackson-module-kotlin")
 	implementation("com.h2database:h2")
