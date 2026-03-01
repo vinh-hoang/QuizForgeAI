@@ -6,7 +6,7 @@ import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
 @ActiveProfiles("test")
-class AiProjectApplicationTests {
+class QuizForgeAiApplicationTests {
 
 	@Test
 	fun contextLoads() {

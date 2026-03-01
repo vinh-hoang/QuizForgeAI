@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class AiProjectApplication
+class QuizForgeAiApplication
 
 fun main(args: Array<String>) {
-    runApplication<AiProjectApplication>(*args)
+    runApplication<QuizForgeAiApplication>(*args)
 }
