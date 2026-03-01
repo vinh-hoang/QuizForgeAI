@@ -27,7 +27,7 @@ class QuizPersistenceServiceIT {
                     optionB = "val",
                     optionC = "let",
                     optionD = "const",
-                    correctAnswer = Question.CorrectAnswer.OPTION_B,
+                    correctOption = Question.Options.OPTION_B,
                     hint = "Think 'value'.",
                 ),
                 Question(
@@ -36,7 +36,7 @@ class QuizPersistenceServiceIT {
                     optionB = ".kts",
                     optionC = ".kotlin",
                     optionD = ".java",
-                    correctAnswer = Question.CorrectAnswer.OPTION_A,
+                    correctOption = Question.Options.OPTION_A,
                     hint = "Two letters.",
                 ),
             ),

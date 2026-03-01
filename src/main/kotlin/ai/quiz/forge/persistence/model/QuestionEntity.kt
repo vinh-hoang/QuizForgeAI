@@ -38,12 +38,12 @@ class QuestionEntity(
     val optionD: String,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "correct_answer")
-    val correctAnswer: Answer,
+    @Column(name = "correct_option")
+    val correctOption: Answer,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "selected_answer")
-    val selectedAnswer: Answer? = null,
+    @Column(name = "selected_option")
+    val selectedOption: Answer? = null,
 
     val hint: String,
     val position: Int,

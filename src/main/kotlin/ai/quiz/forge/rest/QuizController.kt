@@ -20,9 +20,11 @@ class QuizController(
             Take a deep breath. Create a Quiz about the topic "${createQuiz.topic}".
             The quiz should have ${createQuiz.numberOfQuestions.toString().lowercase()} questions
             and be of ${createQuiz.difficulty.toString().lowercase()} difficulty.
-            The questions should have exactly 4 options and only one correct answer.
-            Please check the correctness of the answers to avoid mistakes.
-            Give a subtle Hint for each question if the user struggles.
+            Try to have specific questions and not only general ones.
+            The questions should have exactly 4 options and only one correct option.
+            Make sure that the other options are incorrect.
+            Please be careful of the correctness of the option to avoid mistakes.
+            The Hint should have very very specific Information and should not repeat the information given from the question itself.
             """.trimIndent()
         ).call().entity(Quiz::class.java)
         if (quiz != null){

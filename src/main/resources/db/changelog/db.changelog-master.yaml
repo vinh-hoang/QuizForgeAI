@@ -62,12 +62,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: correct_answer
+                  name: correct_option
                   type: varchar(20)
                   constraints:
                     nullable: false
               - column:
-                  name: selected_answer
+                  name: selected_option
                   type: varchar(20)
                   constraints:
                     nullable: true

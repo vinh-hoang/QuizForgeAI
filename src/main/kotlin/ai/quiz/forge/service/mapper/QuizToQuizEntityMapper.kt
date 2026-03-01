@@ -19,7 +19,7 @@ object QuizToQuizEntityMapper : (Quiz) -> QuizEntity {
                         optionB = optionB,
                         optionC = optionC,
                         optionD = optionD,
-                        correctAnswer = QuestionEntity.Answer.valueOf(correctAnswer.name),
+                        correctOption = QuestionEntity.Answer.valueOf(correctOption.name),
                         hint = hint,
                         position = index,
                     )
@@ -29,4 +29,3 @@ object QuizToQuizEntityMapper : (Quiz) -> QuizEntity {
         return quizEntity
     }
 }
-

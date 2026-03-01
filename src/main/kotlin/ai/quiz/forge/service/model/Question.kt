@@ -6,10 +6,10 @@ data class Question (
     val optionB: String,
     val optionC: String,
     val optionD: String,
-    val correctAnswer: CorrectAnswer,
+    val correctOption: Options,
     val hint: String,
 ) {
-    enum class CorrectAnswer {
+    enum class Options {
         OPTION_A,
         OPTION_B,
         OPTION_C,

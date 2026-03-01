@@ -26,7 +26,7 @@ object QuizEntityToQuizMapper : (QuizEntity) -> Quiz {
             optionB = optionB,
             optionC = optionC,
             optionD = optionD,
-            correctAnswer = Question.CorrectAnswer.valueOf(correctAnswer.name),
+            correctOption = Question.Options.valueOf(correctOption.name),
             hint = hint,
         )
 }

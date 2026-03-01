@@ -1,11 +1,11 @@
 services:
   db:
     image: postgres:18.3-alpine3.23
-    container_name: quizforge_db
+    container_name: quiz_forge_db
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=quizforge
+      - POSTGRES_DB=quizForge
     ports:
       - "5432:5432"
     volumes:

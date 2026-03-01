@@ -9,7 +9,7 @@ spring:
           model: qwen3:8b
       api-key: "your-api-key"
   datasource:
-    url: jdbc:postgresql://localhost:5432/quizforge
+    url: jdbc:postgresql://localhost:5432/quizForge
     username: admin
     password: password
     driver-class-name: org.postgresql.Driver
