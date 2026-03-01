@@ -1,0 +1,19 @@
+info:
+  name: Quiz
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: http://localhost:8080/quiz/05a8e683-7654-40af-aede-fbc69ba2819a
+  headers:
+    - name: Content-Type
+      value: application/json
+      disabled: true
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,11 +1,11 @@
 info:
-  name: Chat
+  name: create Quiz
   type: http
   seq: 1
 
 http:
   method: POST
-  url: http://localhost:8080/chat
+  url: http://localhost:8080/quiz
   headers:
     - name: Content-Type
       value: application/json
@@ -14,8 +14,8 @@ http:
     data: |-
       {
         "numberOfQuestions": "FIVE",
-        "difficulty": "BEGINNER",
-        "topic": "kotlin"
+        "difficulty": "EXPERT",
+        "topic": "geography in europe"
       }
   auth: inherit
 
