@@ -10,8 +10,13 @@ http:
     - name: Content-Type
       value: application/json
   body:
-    type: text
-    data: whats up
+    type: json
+    data: |-
+      {
+        "numberOfQuestions": "FIVE",
+        "difficulty": "BEGINNER",
+        "topic": "kotlin"
+      }
   auth: inherit
 
 settings:

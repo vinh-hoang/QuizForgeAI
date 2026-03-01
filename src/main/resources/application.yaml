@@ -9,10 +9,21 @@ spring:
           model: qwen3:8b
       api-key: "your-api-key"
   datasource:
-    url: jdbc:postgresql://localhost:5432/ai_project
-    username: user
+    url: jdbc:postgresql://localhost:5432/quizforge
+    username: admin
     password: password
     driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 logging:
   level:

@@ -1,0 +1,102 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-quiz-schema
+      author: quizforge
+      changes:
+        - createTable:
+            tableName: quiz
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: topic
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: question
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: quiz_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: question
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: option_a
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: option_b
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: option_c
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: option_d
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: correct_answer
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: hint
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: position
+                  type: int
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: question
+            baseColumnNames: quiz_id
+            referencedTableName: quiz
+            referencedColumnNames: id
+            constraintName: fk_question_quiz
+            onDelete: CASCADE
+        - createIndex:
+            tableName: question
+            indexName: idx_question_quiz_id
+            columns:
+              - column:
+                  name: quiz_id
+        - createIndex:
+            tableName: question
+            indexName: idx_question_quiz_position
+            columns:
+              - column:
+                  name: quiz_id
+              - column:
+                  name: position
+
