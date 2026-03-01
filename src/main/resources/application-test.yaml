@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: quiz-forge-ai
+  ai:
+    openai:
+      api-key: "YOUR_OPENAI_API_KEY"
+  datasource:
+    url: jdbc:tc:postgresql:16.2:///ai_project
+    username: ai_user
+    password: ai_password
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
