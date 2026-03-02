@@ -2,6 +2,7 @@ package ai.quiz.forge.service
 
 import ai.quiz.forge.service.model.Question
 import ai.quiz.forge.service.model.Quiz
+import ai.quiz.forge.shared.Option
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -27,7 +28,7 @@ class QuizPersistenceServiceIT {
                     optionB = "val",
                     optionC = "let",
                     optionD = "const",
-                    correctOption = Question.Options.OPTION_B,
+                    correctOption = Option.OPTION_B,
                     hint = "Think 'value'.",
                 ),
                 Question(
@@ -36,7 +37,7 @@ class QuizPersistenceServiceIT {
                     optionB = ".kts",
                     optionC = ".kotlin",
                     optionD = ".java",
-                    correctOption = Question.Options.OPTION_A,
+                    correctOption = Option.OPTION_A,
                     hint = "Two letters.",
                 ),
             ),

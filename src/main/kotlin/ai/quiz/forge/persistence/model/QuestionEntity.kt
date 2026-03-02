@@ -1,5 +1,6 @@
 package ai.quiz.forge.persistence.model
 
+import ai.quiz.forge.shared.Option
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -39,19 +40,12 @@ class QuestionEntity(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "correct_option")
-    val correctOption: Answer,
+    val correctOption: Option,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "selected_option")
-    val selectedOption: Answer? = null,
+    val selectedOption: Option? = null,
 
     val hint: String,
     val position: Int,
-) {
-    enum class Answer {
-        OPTION_A,
-        OPTION_B,
-        OPTION_C,
-        OPTION_D,
-    }
-}
+)
