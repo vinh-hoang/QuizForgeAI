@@ -5,10 +5,11 @@ import java.util.UUID
 data class QuizDto(
     val id: UUID,
     val questionCount: Int,
-    val currentQuestion: QuestionDto
+    /** Zero-based index of the current (first unanswered) question. */
+    val currentQuestionIndex: Int,
+    val currentQuestion: QuestionDto,
 ) {
     data class QuestionDto(
-        val position: Int, //starting at 1
         val question: String,
         val optionA: String,
         val optionB: String,

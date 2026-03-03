@@ -1,9 +1,13 @@
 package ai.quiz.forge.rest
 
 import ai.quiz.forge.rest.model.CreateQuiz
+import ai.quiz.forge.rest.model.QuizDto
 import ai.quiz.forge.service.QuizPersistenceService
+import ai.quiz.forge.service.mapper.NewQuizToQuizMapper
+import ai.quiz.forge.service.mapper.QuizEntityToQuizMapper
 import ai.quiz.forge.service.mapper.QuizToQuizDtoMapper
 import ai.quiz.forge.service.model.Quiz
+import ai.quiz.forge.service.model.ai.generated.NewQuiz
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,8 +25,8 @@ class QuizController(
     val quizPersistenceService: QuizPersistenceService,
 ) {
     @PostMapping("/quiz")
-    fun createQuiz(@RequestBody createQuiz: CreateQuiz): String {
-        val quiz = chatClient.prompt().user(
+    fun createQuiz(@RequestBody createQuiz: CreateQuiz): QuizDto {
+        val newQuiz = chatClient.prompt().user(
             """
             Take a deep breath. Create a Quiz about the topic "${createQuiz.topic}".
             The quiz should have ${createQuiz.numberOfQuestions.toString().lowercase()} questions
@@ -33,22 +37,26 @@ class QuizController(
             Please be careful of the correctness of the option to avoid mistakes.
             The Hint should have very very specific Information and should not repeat the information given from the question itself.
             """.trimIndent()
-        ).call().entity(Quiz::class.java)
+        ).call().entity(NewQuiz::class.java)
 
-        if (quiz == null) {
+        if (newQuiz == null) {
             throw ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "Failed to generate quiz",
             )
         }
 
-        quizPersistenceService.save(quiz)
-        return QuizToQuizDtoMapper(quiz)
+        val generatedQuiz = NewQuizToQuizMapper(newQuiz)
+        val savedQuiz = quizPersistenceService.save(generatedQuiz)
+        return savedQuiz
+            .run(QuizEntityToQuizMapper)
+            .run(QuizToQuizDtoMapper)
     }
 
     @GetMapping("/quiz/{quizId}")
-    fun getQuiz(@PathVariable quizId: UUID): Quiz =
+    fun getQuiz(@PathVariable quizId: UUID): QuizDto =
         quizPersistenceService.findById(quizId)
+            ?.run(QuizToQuizDtoMapper)
             ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Quiz with id $quizId not found",

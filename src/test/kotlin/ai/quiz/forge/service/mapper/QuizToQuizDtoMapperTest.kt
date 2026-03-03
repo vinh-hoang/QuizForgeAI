@@ -38,9 +38,9 @@ class QuizToQuizDtoMapperTest {
 
         val dto = QuizToQuizDtoMapper(quiz)
 
-        assertEquals(0, dto.id)
-        assertEquals("NEW", dto.status)
+        assertEquals(quiz.id, dto.id)
         assertEquals(2, dto.questionCount)
+        assertEquals(1, dto.currentQuestionIndex)
         assertEquals(2, dto.currentQuestion.position)
         assertEquals("Q2?", dto.currentQuestion.question)
         assertEquals("A2", dto.currentQuestion.optionA)

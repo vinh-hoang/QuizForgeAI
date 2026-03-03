@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: http://localhost:8080/quiz/05a8e683-7654-40af-aede-fbc69ba2819a
+  url: http://localhost:8080/quiz/72f5ab29-590b-4186-905f-44c75a5bbde6
   headers:
     - name: Content-Type
       value: application/json

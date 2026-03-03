@@ -4,18 +4,19 @@ import ai.quiz.forge.rest.model.QuizDto
 import ai.quiz.forge.service.model.Quiz
 
 object QuizToQuizDtoMapper : (Quiz) -> QuizDto {
-    override fun invoke(quiz: Quiz): String {
+    override fun invoke(quiz: Quiz): QuizDto {
+        require(quiz.questions.isNotEmpty()) { "Quiz must contain at least one question" }
+
         val currentIndex = quiz.questions.indexOfFirst { question -> question.selectedOption == null }
+        require(currentIndex >= 0) { "All questions are already answered" }
+
         val currentQuestion = quiz.questions[currentIndex]
 
         return QuizDto(
-            // Service model Quiz currently doesn't carry persistence id/status.
-            // These placeholders keep the DTO usable until the API model is aligned.
             id = quiz.id,
             questionCount = quiz.questions.size,
+            currentQuestionIndex = currentIndex + 1,
             currentQuestion = QuizDto.QuestionDto(
-                // DTO contract says position starts at 1
-                position = currentIndex + 1,
                 question = currentQuestion.question,
                 optionA = currentQuestion.optionA,
                 optionB = currentQuestion.optionB,

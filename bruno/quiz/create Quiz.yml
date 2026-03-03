@@ -14,8 +14,8 @@ http:
     data: |-
       {
         "numberOfQuestions": "FIVE",
-        "difficulty": "EXPERT",
-        "topic": "geography in europe"
+        "difficulty": "BEGINNER",
+        "topic": "geography in asia"
       }
   auth: inherit
 
