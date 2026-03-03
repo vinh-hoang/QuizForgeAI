@@ -43,8 +43,11 @@ class QuizPersistenceServiceIT {
             ),
         )
 
-        val id = quizPersistenceService.save(quiz)
-        val loaded = quizPersistenceService.findById(id)
+        val saved = quizPersistenceService.save(quiz)
+        val id = saved.id
+        assertNotNull(id)
+
+        val loaded = quizPersistenceService.findById(id!!)
 
         assertNotNull(loaded)
         assertEquals(quiz.topic, loaded!!.topic)

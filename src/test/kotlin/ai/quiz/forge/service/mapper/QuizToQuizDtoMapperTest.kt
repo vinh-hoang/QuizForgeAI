@@ -40,8 +40,7 @@ class QuizToQuizDtoMapperTest {
 
         assertEquals(quiz.id, dto.id)
         assertEquals(2, dto.questionCount)
-        assertEquals(1, dto.currentQuestionIndex)
-        assertEquals(2, dto.currentQuestion.position)
+        assertEquals(2, dto.currentQuestionIndex)
         assertEquals("Q2?", dto.currentQuestion.question)
         assertEquals("A2", dto.currentQuestion.optionA)
         assertEquals("H2", dto.currentQuestion.hint)
