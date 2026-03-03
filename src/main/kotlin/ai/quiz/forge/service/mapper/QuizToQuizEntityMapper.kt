@@ -20,6 +20,7 @@ object QuizToQuizEntityMapper : (Quiz) -> QuizEntity {
                         optionC = optionC,
                         optionD = optionD,
                         correctOption = correctOption,
+                        selectedOption = selectedOption,
                         hint = hint,
                         position = index,
                     )

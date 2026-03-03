@@ -14,6 +14,7 @@ object QuizEntityToQuizMapper : (QuizEntity) -> Quiz {
             .map { it.toQuestion() }
 
         return Quiz(
+            id = entity.id,
             topic = entity.topic,
             questions = questions,
         )
@@ -27,6 +28,7 @@ object QuizEntityToQuizMapper : (QuizEntity) -> Quiz {
             optionC = optionC,
             optionD = optionD,
             correctOption = correctOption,
+            selectedOption = selectedOption,
             hint = hint,
         )
 }

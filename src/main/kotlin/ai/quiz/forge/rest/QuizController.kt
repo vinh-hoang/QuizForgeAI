@@ -2,10 +2,12 @@ package ai.quiz.forge.rest
 
 import ai.quiz.forge.rest.model.CreateQuiz
 import ai.quiz.forge.service.QuizPersistenceService
+import ai.quiz.forge.service.mapper.QuizToQuizDtoMapper
 import ai.quiz.forge.service.model.Quiz
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -41,7 +43,7 @@ class QuizController(
         }
 
         quizPersistenceService.save(quiz)
-        return quiz.toString()
+        return QuizToQuizDtoMapper(quiz)
     }
 
     @GetMapping("/quiz/{quizId}")
@@ -52,10 +54,9 @@ class QuizController(
                 "Quiz with id $quizId not found",
             )
 
-    @PostMapping("/quiz/{quizId}/question/{questionId}/answer")
+    @PatchMapping("/quiz/{quizId}/question/current")
     fun answerQuestion(
         @PathVariable quizId: UUID,
-        @PathVariable questionId: UUID,
         @RequestBody body: String
     ) {
         // TODO implement answer submission
