@@ -15,7 +15,7 @@ http:
       {
         "numberOfQuestions": "FIVE",
         "difficulty": "BEGINNER",
-        "topic": "geography in asia"
+        "topic": "food in vietnam"
       }
   auth: inherit
 
