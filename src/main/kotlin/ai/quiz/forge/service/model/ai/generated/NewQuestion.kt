@@ -8,6 +8,5 @@ data class NewQuestion(
     val optionB: String,
     val optionC: String,
     val optionD: String,
-    val correctOption: Option,
     val hint: String,
 )

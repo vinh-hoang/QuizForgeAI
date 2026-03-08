@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 data class NewQuiz(
-    val topic: String,
-    val questions: List<Question>,
+    val questions: List<NewQuestion>,
 ) {
     override fun toString(): String = objectMapper.writeValueAsString(this)
 
