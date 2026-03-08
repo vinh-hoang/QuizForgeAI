@@ -7,6 +7,7 @@ import ai.quiz.forge.service.model.Quiz
 object QuizToQuizEntityMapper : (Quiz) -> QuizEntity {
     override fun invoke(quiz: Quiz): QuizEntity {
         val quizEntity = QuizEntity(
+            id = quiz.id,
             topic = quiz.topic,
         )
         quiz.questions.forEachIndexed { index, q ->

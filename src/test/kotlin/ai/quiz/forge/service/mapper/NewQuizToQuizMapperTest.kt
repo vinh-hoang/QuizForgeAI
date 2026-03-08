@@ -1,8 +1,7 @@
 package ai.quiz.forge.service.mapper
 
-import ai.quiz.forge.service.model.Question
+import ai.quiz.forge.service.model.ai.generated.NewQuestion
 import ai.quiz.forge.service.model.ai.generated.NewQuiz
-import ai.quiz.forge.shared.Option
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -14,22 +13,19 @@ class NewQuizToQuizMapperTest {
     @Test
     fun `maps newQuiz to quiz and clears any selectedOption`() {
         val newQuiz = NewQuiz(
-            topic = "Kotlin",
             questions = listOf(
-                Question(
+                NewQuestion(
                     question = "Q1?",
                     optionA = "A",
                     optionB = "B",
                     optionC = "C",
                     optionD = "D",
-                    correctOption = Option.OPTION_A,
-                    selectedOption = Option.OPTION_B,
                     hint = "H1",
                 ),
             ),
         )
 
-        val quiz = NewQuizToQuizMapper(newQuiz)
+        val quiz = NewQuizToQuizMapper("Kotlin", newQuiz)
 
         assertNotNull(quiz.id)
         assertEquals("Kotlin", quiz.topic)
@@ -40,10 +36,9 @@ class NewQuizToQuizMapperTest {
 
     @Test
     fun `throws when newQuiz has no questions`() {
-        val newQuiz = NewQuiz(topic = "Empty", questions = emptyList())
+        val newQuiz = NewQuiz(questions = emptyList())
         assertThrows(IllegalArgumentException::class.java) {
-            NewQuizToQuizMapper(newQuiz)
+            NewQuizToQuizMapper("Empty", newQuiz)
         }
     }
 }
-

@@ -15,9 +15,14 @@ http:
       {
         "numberOfQuestions": "FIVE",
         "difficulty": "BEGINNER",
-        "topic": "food in vietnam"
+        "topic": "linear algebra"
       }
   auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: bru.setVar("quizId",res.body.id);
 
 settings:
   encodeUrl: true

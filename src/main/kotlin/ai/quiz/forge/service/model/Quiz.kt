@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.util.UUID
 
 data class Quiz(
-    val id: UUID = UUID.randomUUID(),
+    val id: UUID? = null,
     val topic: String,
     val questions: List<Question>,
 ) {
