@@ -8,7 +8,8 @@ data class Question(
     val optionB: String,
     val optionC: String,
     val optionD: String,
-    val correctOption: Option,
-    val selectedOption: Option? = null,
     val hint: String,
+    var correctOption: Option?=null,
+    var selectedOption: Option? = null,
+    var explanation: String? = null,
 )

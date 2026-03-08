@@ -1,6 +1,5 @@
 package ai.quiz.forge.service.model.ai.generated
 
-import ai.quiz.forge.service.model.Question
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 

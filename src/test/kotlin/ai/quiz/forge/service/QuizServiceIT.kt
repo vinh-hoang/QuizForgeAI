@@ -12,10 +12,10 @@ import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
 @ActiveProfiles("test")
-class QuizPersistenceServiceIT {
+class QuizServiceIT {
 
     @Autowired
-    lateinit var quizPersistenceService: QuizPersistenceService
+    lateinit var quizPersistenceService: QuizService
 
     @Test
     fun `saves and loads quiz`() {

@@ -65,7 +65,7 @@ databaseChangeLog:
                   name: correct_option
                   type: varchar(20)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: selected_option
                   type: varchar(20)
@@ -76,6 +76,11 @@ databaseChangeLog:
                   type: text
                   constraints:
                     nullable: false
+              - column:
+                  name: explanation
+                  type: text
+                  constraints:
+                    nullable: true
               - column:
                   name: position
                   type: int

@@ -40,12 +40,13 @@ class QuestionEntity(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "correct_option")
-    val correctOption: Option,
+    val correctOption: Option? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "selected_option")
     val selectedOption: Option? = null,
 
+    val explanation: String? = null,
     val hint: String,
     val position: Int,
 )
