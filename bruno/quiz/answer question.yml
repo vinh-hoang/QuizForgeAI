@@ -1,0 +1,21 @@
+info:
+  name: answer question
+  type: http
+  seq: 3
+
+http:
+  method: PUT
+  url: http://localhost:8080/quiz/{{quizId}}/question/current
+  body:
+    type: json
+    data: |-
+      {
+        "selectedOption": "OPTION_A"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
