@@ -4,13 +4,13 @@ info:
   seq: 3
 
 http:
-  method: PUT
+  method: PATCH
   url: http://localhost:8080/quiz/{{quizId}}/question/current
   body:
     type: json
     data: |-
       {
-        "selectedOption": "OPTION_A"
+        "selectedOption": "OPTION_B"
       }
   auth: inherit
 

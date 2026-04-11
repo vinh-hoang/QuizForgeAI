@@ -6,7 +6,7 @@ spring:
       chat:
         base-url: http://localhost:11434
         options:
-          model: lfm2
+          model: gemma4:e2b
       api-key: "your-api-key"
   datasource:
     url: jdbc:postgresql://localhost:5432/quizForge

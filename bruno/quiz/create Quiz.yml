@@ -15,7 +15,7 @@ http:
       {
         "numberOfQuestions": "FIVE",
         "difficulty": "BEGINNER",
-        "topic": "linear algebra"
+        "topic": "rest api"
       }
   auth: inherit
 
