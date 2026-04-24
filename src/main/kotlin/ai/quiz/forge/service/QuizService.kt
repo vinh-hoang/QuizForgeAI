@@ -5,6 +5,7 @@ import ai.quiz.forge.rest.model.CreateQuiz
 import ai.quiz.forge.service.mapper.NewQuizToQuizMapper
 import ai.quiz.forge.service.mapper.QuizEntityToQuizMapper
 import ai.quiz.forge.service.mapper.QuizToQuizEntityMapper
+import ai.quiz.forge.service.model.Question
 import ai.quiz.forge.service.model.Quiz
 import ai.quiz.forge.service.model.ai.generated.Answer
 import ai.quiz.forge.service.model.ai.generated.NewQuiz
@@ -52,29 +53,44 @@ class QuizService(
         /**
          * It seems like the AI should answer each question separately to archive better results.
          **/
-        val currentQuestion = quiz.questions.find { it.selectedOption == null } ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "Quiz already finished")
-        with(currentQuestion) {
-            val aiAnswer = chatClient.prompt().user(
-                """
-                Choose the correctOption for the following question: "${question}"
-                With the hint: "${hint}"
+        val currentQuestion = quiz.questions.find { it.selectedOption == null }
+            ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "Quiz already finished")
+
+        val aiAnswer = processQuestionAnswer(currentQuestion, selectedOption)
+
+        // Update and save the quiz state
+        currentQuestion.selectedOption = selectedOption
+        currentQuestion.correctOption = aiAnswer.correctOption
+        currentQuestion.explanation = aiAnswer.explanation
+        save(quiz)
+
+        return aiAnswer
+    }
+
+    /**
+     * Processes the AI request for a single question answer.
+     */
+    private fun processQuestionAnswer(currentQuestion: Question, selectedOption: Option): Answer {
+        val prompt = buildAnswerPrompt(currentQuestion, selectedOption)
+        return chatClient.prompt().user(prompt)
+            .call().entity<Answer>()
+    }
+
+    /**
+     * Builds the detailed prompt for the AI based on the current question's state.
+     */
+    private fun buildAnswerPrompt(currentQuestion: Question, selectedOption: Option): String {
+        return """
+                Choose the correctOption for the following question: "${currentQuestion.question}"
+                With the hint: "${currentQuestion.hint}"
                 The options are: 
-                OptionA:${optionA},
-                OptionB:${optionB},
-                OptionC:${optionC},
-                OptionD:${optionD}.
-                The user selected ${selectedOption}.
+                OptionA:${currentQuestion.optionA},
+                OptionB:${currentQuestion.optionB},
+                OptionC:${currentQuestion.optionC},
+                OptionD:${currentQuestion.optionD}.
+                The user selected $selectedOption.
                 Also give an explanation why this is the correctOption. If the user selectedOption is wrong, also add it to the explanation.
             """.trimIndent()
-            ).call().entity<Answer>()
-
-            this.selectedOption = selectedOption
-            correctOption = aiAnswer.correctOption
-            explanation = aiAnswer.explanation
-            save(quiz)
-
-            return aiAnswer
-        }
     }
 
     @Transactional
