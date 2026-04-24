@@ -1,11 +1,15 @@
 info:
-  name: answer question
+  name: answer Question
   type: http
   seq: 3
 
 http:
   method: PATCH
   url: http://localhost:8080/quiz/{{quizId}}/question/current
+  headers:
+    - name: Content-Type
+      value: application/json
+      disabled: true
   body:
     type: json
     data: |-
