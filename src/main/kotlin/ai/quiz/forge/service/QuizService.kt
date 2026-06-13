@@ -1,14 +1,13 @@
-package ai.quiz.forge.service
+﻿package ai.quiz.forge.service
 
 import ai.quiz.forge.persistence.repository.QuizRepository
 import ai.quiz.forge.rest.model.CreateQuiz
-import ai.quiz.forge.service.mapper.NewQuizToQuizMapper
 import ai.quiz.forge.service.mapper.QuizEntityToQuizMapper
 import ai.quiz.forge.service.mapper.QuizToQuizEntityMapper
 import ai.quiz.forge.service.model.Question
 import ai.quiz.forge.service.model.Quiz
 import ai.quiz.forge.service.model.ai.generated.Answer
-import ai.quiz.forge.service.model.ai.generated.NewQuiz
+import ai.quiz.forge.service.model.ai.generated.NewQuestion
 import ai.quiz.forge.shared.Option
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.entity
@@ -24,19 +23,64 @@ class QuizService(
     private val chatClient: ChatClient,
 ) {
 
-    fun createQuiz(createQuiz: CreateQuiz): Quiz {
-        val newQuiz = chatClient.prompt().user(
-            """
-            Create a Quiz about the topic "${createQuiz.topic}".
-            The quiz should have ${createQuiz.numberOfQuestions.toString().lowercase()} questions
-            and be of ${createQuiz.difficulty.toString().lowercase()} difficulty.
-            The questions should have exactly 4 options and only one correct option.
-            The Hint should have very specific Information and should not repeat the information given from the question itself.
-            """.trimIndent()
-        ).call().entity<NewQuiz>()
+    private fun CreateQuiz.NumberOfQuestions.toInt(): Int = when (this) {
+        CreateQuiz.NumberOfQuestions.FIVE -> 5
+        CreateQuiz.NumberOfQuestions.TEN -> 10
+        CreateQuiz.NumberOfQuestions.FIFTEEN -> 15
+    }
 
-        return NewQuizToQuizMapper(createQuiz.topic, newQuiz)
-            .run(::save)
+    fun createQuiz(createQuiz: CreateQuiz): Quiz {
+        val topic = createQuiz.topic
+        val totalQuestions = createQuiz.numberOfQuestions.toInt()
+        val difficulty = createQuiz.difficulty.toString().lowercase()
+        val generatedQuestions = mutableListOf<NewQuestion>()
+
+        repeat(totalQuestions) { index ->
+            val previousQuestionsPrompt = if (generatedQuestions.isEmpty()) {
+                ""
+            } else {
+                "Do NOT generate questions similar to these:\n" +
+                    generatedQuestions.joinToString("\n") { "- ${it.question}" }
+            }
+
+            val prompt = """
+                Create a single quiz question about the topic "$topic" and be of $difficulty difficulty.
+                The question should have exactly 4 answer options and only one correct option.
+                The Hint should have very specific Information and should not repeat the information given from the question itself.
+                Take your time. Do no mistakes.
+                $previousQuestionsPrompt
+            """.trimIndent()
+
+            val newQuestion = generateQuestion(prompt, index + 1, totalQuestions)
+            generatedQuestions.add(newQuestion)
+        }
+
+        return Quiz(
+            topic = topic,
+            questions = generatedQuestions.map {
+                Question(
+                    question = it.question,
+                    optionA = it.optionA,
+                    optionB = it.optionB,
+                    optionC = it.optionC,
+                    optionD = it.optionD,
+                    hint = it.hint,
+                )
+            },
+        ).run(::save)
+    }
+
+    private fun generateQuestion(prompt: String, questionNumber: Int, totalQuestions: Int): NewQuestion {
+        repeat(5) {
+            try {
+                return chatClient.prompt().user(prompt)
+                    .call().entity<NewQuestion>()
+            } catch (_: Exception) {
+
+            }
+        }
+
+        throw RuntimeException("Failed to generate question #$questionNumber of $totalQuestions after 5 attempts")
     }
 
     @Transactional(readOnly = true)
