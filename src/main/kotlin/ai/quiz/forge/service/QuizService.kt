@@ -9,6 +9,7 @@ import ai.quiz.forge.service.model.Quiz
 import ai.quiz.forge.service.model.ai.generated.Answer
 import ai.quiz.forge.service.model.ai.generated.NewQuestion
 import ai.quiz.forge.shared.Option
+import org.slf4j.LoggerFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.entity
 import org.springframework.http.HttpStatus
@@ -23,6 +24,10 @@ class QuizService(
     private val chatClient: ChatClient,
 ) {
 
+    private companion object {
+        private val log = LoggerFactory.getLogger(QuizService::class.java)
+    }
+
     private fun CreateQuiz.NumberOfQuestions.toInt(): Int = when (this) {
         CreateQuiz.NumberOfQuestions.FIVE -> 5
         CreateQuiz.NumberOfQuestions.TEN -> 10
@@ -36,12 +41,10 @@ class QuizService(
         val generatedQuestions = mutableListOf<NewQuestion>()
 
         repeat(totalQuestions) { index ->
-            val previousQuestionsPrompt = if (generatedQuestions.isEmpty()) {
-                ""
-            } else {
+            val previousQuestionsPrompt = if (generatedQuestions.isNotEmpty()) {
                 "Do NOT generate questions similar to these:\n" +
                     generatedQuestions.joinToString("\n") { "- ${it.question}" }
-            }
+            } else { "" }
 
             val prompt = """
                 Create a single quiz question about the topic "$topic" and be of $difficulty difficulty.
@@ -75,11 +78,10 @@ class QuizService(
             try {
                 return chatClient.prompt().user(prompt)
                     .call().entity<NewQuestion>()
-            } catch (_: Exception) {
-
+            } catch (e: Exception) {
+                log.warn("Error occurred while generating new question",e)
             }
         }
-
         throw RuntimeException("Failed to generate question #$questionNumber of $totalQuestions after 5 attempts")
     }
 
