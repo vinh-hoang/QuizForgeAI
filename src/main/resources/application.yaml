@@ -4,9 +4,9 @@ spring:
   ai:
     openai:
       chat:
-        base-url: http://localhost:11434
+        base-url: http://localhost:1234
         options:
-          model: gemma4:e4b
+          model: google/gemma-4-12b
       api-key: "local-llm-no-key-needed"
   datasource:
     url: jdbc:postgresql://localhost:5432/quizForge
