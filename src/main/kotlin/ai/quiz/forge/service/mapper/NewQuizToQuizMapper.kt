@@ -1,4 +1,4 @@
-﻿package ai.quiz.forge.service.mapper
+package ai.quiz.forge.service.mapper
 
 import ai.quiz.forge.service.model.Question
 import ai.quiz.forge.service.model.Quiz
@@ -27,7 +27,6 @@ object NewQuizToQuizMapper : (String, NewQuiz) -> Quiz {
         }
 
         return Quiz(
-            id = java.util.UUID.randomUUID(),
             topic = topic,
             questions = questions,
         )

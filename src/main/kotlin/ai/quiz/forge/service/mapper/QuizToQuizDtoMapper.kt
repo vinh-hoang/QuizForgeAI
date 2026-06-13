@@ -1,4 +1,4 @@
-﻿package ai.quiz.forge.service.mapper
+package ai.quiz.forge.service.mapper
 
 import ai.quiz.forge.rest.model.QuizDto
 import ai.quiz.forge.service.model.Quiz
@@ -13,7 +13,7 @@ object QuizToQuizDtoMapper : (Quiz) -> QuizDto {
         val currentQuestion = quiz.questions[currentIndex]
 
         return QuizDto(
-            id = quiz.id,
+            id = quiz.id!!,
             questionCount = quiz.questions.size,
             currentQuestionIndex = currentIndex + 1,
             currentQuestion = QuizDto.QuestionDto(
