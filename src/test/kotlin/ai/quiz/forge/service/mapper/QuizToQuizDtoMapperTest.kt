@@ -1,4 +1,4 @@
-package ai.quiz.forge.service.mapper
+﻿package ai.quiz.forge.service.mapper
 
 import ai.quiz.forge.service.model.Question
 import ai.quiz.forge.service.model.Quiz
@@ -12,6 +12,7 @@ class QuizToQuizDtoMapperTest {
     @Test
     fun `maps quiz to dto using first unanswered question as currentQuestion`() {
         val quiz = Quiz(
+            id = java.util.UUID.randomUUID(),
             topic = "Kotlin",
             questions = listOf(
                 Question(
