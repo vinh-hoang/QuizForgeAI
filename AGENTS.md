@@ -6,7 +6,7 @@ Spring Boot + Kotlin project for AI-powered quiz generation.
 
 - **Language**: Kotlin 2.3.10
 - **Framework**: Spring Boot 4.0.3
-- **Build**: Gradle 9.5.1 (wrapper: `.\gradlew`)
+- **Build**: Gradle 9.5.1
 - **Runtime**: Java 25
 - **Database**: PostgreSQL (production), H2 (tests)
 - **Migrations**: Liquibase
@@ -43,17 +43,17 @@ src/main/kotlin/ai/quiz/forge/
 
 2. **Run the app**:
    ```
-   .\gradlew bootRun
+   gradle bootRun
    ```
 
 3. **Run tests**:
    ```
-   .\gradlew test
+   gradle test
    ```
 
 4. **Clean build**:
    ```
-   .\gradlew clean bootJar
+   gradle clean bootJar
    ```
 
 ## Key Config
@@ -73,7 +73,7 @@ Spring AI dependencies are managed via BOM in `build.gradle.kts` (`springAiVersi
 
 ## Conventions
 
-- Use `.\gradlew` (not `gradle`) — the system `gradle` command is not on PATH.
+- Use `gradle` directly — the system gradle command is on PATH.
 - Entity/DTO mappers live in `service.mapper` package.
 - Testcontainers PostgreSQL is used for integration tests (`QuizServiceIT`).
 - H2 is the default test database (via `spring-boot-starter-data-jpa` auto-config).
