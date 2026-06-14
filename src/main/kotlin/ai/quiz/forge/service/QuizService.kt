@@ -47,10 +47,10 @@ class QuizService(
             } else { "" }
 
             val prompt = """
-                Create a single quiz question about the topic "$topic" and be of $difficulty difficulty.
+                Create a single quiz question about the topic "$topic" of $difficulty difficulty.
                 The question should have exactly 4 answer options and only one correct option.
-                The Hint should have very specific Information and should not repeat the information given from the question itself.
-                Take your time. Do no mistakes.
+                The Hint should help to find the correct option.
+                Do no mistakes.
                 $previousQuestionsPrompt
             """.trimIndent()
 

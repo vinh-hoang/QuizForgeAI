@@ -3,6 +3,7 @@ package ai.quiz.forge.service.mapper
 import ai.quiz.forge.service.model.Question
 import ai.quiz.forge.service.model.Quiz
 import ai.quiz.forge.service.model.ai.generated.NewQuiz
+import java.util.UUID
 
 /**
  * Maps an AI-generated [NewQuiz] into the service [Quiz] domain model.
@@ -27,6 +28,7 @@ object NewQuizToQuizMapper : (String, NewQuiz) -> Quiz {
         }
 
         return Quiz(
+            id = UUID.randomUUID(),
             topic = topic,
             questions = questions,
         )
