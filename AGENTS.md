@@ -65,9 +65,9 @@ src/main/kotlin/ai/quiz/forge/
 
 ## Dependencies
 
-Spring AI dependencies are managed via BOM in `build.gradle.kts` (`springAiVersion = "2.0.0-M2"`):
+Spring AI dependencies are managed via BOM in `build.gradle.kts` (`springAiVersion = "2.0.0"`):
 
-- `spring-ai-advisors-vector-store` — vector store retrieval augmentation
+- `spring-ai-vector-store-advisor` — vector store retrieval augmentation
 - `spring-ai-starter-model-openai` — OpenAI chat model adapter
 - `spring-ai-starter-vector-store-pgvector` — PostgreSQL vector store
 

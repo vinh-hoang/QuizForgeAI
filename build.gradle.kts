@@ -20,7 +20,7 @@ repositories {
 	mavenCentral()
 }
 
-extra["springAiVersion"] = "2.0.0-M2"
+extra["springAiVersion"] = "2.0.0"
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
@@ -28,7 +28,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-liquibase")
 	implementation("org.postgresql:postgresql")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.springframework.ai:spring-ai-advisors-vector-store")
+	implementation("org.springframework.ai:spring-ai-vector-store-advisor")
 	implementation("org.springframework.ai:spring-ai-starter-model-openai")
 	implementation("org.springframework.ai:spring-ai-starter-vector-store-pgvector")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.2")

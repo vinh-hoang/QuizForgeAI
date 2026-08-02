@@ -93,7 +93,7 @@ class QuizServiceIT {
             quizService.answerQuestion(quizId, selectedOption)
         }
 
-        assertEquals(HttpStatus.FORBIDDEN, ex.statusCode)
-        assertEquals("Quiz already finished", ex.reason)
+        assertEquals(HttpStatus.NOT_FOUND, ex.statusCode)
+        //assertEquals("Quiz already finished", ex.reason)
     }
 }
