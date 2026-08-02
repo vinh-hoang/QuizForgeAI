@@ -1,80 +1,90 @@
 ﻿# QuizForgeAI
 
-Spring Boot + Kotlin project for AI-powered quiz generation.
+Spring Boot and Kotlin application for generating and answering AI-powered quizzes.
 
-## Tech Stack
+## Technology
 
-- **Language**: Kotlin 2.3.10
-- **Framework**: Spring Boot 4.0.3
-- **Build**: Gradle 9.5.1
-- **Runtime**: Java 25
-- **Database**: PostgreSQL (production), H2 (tests)
-- **Migrations**: Liquibase
-- **AI**: Spring AI 2.0.0-M2 (OpenAI, configured for local LLM at `localhost:1234`)
-- **API Testing**: Bruno (`bruno/quiz/`)
+- Kotlin 2.3.10
+- Spring Boot 4.0.3
+- Gradle 9.5.1 via the checked-in Gradle wrapper
+- Java 25
+- PostgreSQL with Liquibase in the application environment
+- H2 with Liquibase in tests
+- Spring AI 2.0.0 using an OpenAI-compatible local endpoint
+- Bruno collections in `bruno/quiz/`
 
-## Project Structure
+## Repository Layout
 
-```
+```text
 src/main/kotlin/ai/quiz/forge/
-├── QuizForgeAiApplication.kt    # Application entry point
+├── QuizForgeAiApplication.kt
+├── config/                         # Spring and AI configuration
 ├── persistence/
-│   ├── model/                    # JPA entities (QuizEntity, QuestionEntity)
-│   └── repository/               # Spring Data JPA repositories
+│   ├── model/                      # JPA entities
+│   └── repository/                 # Spring Data repositories
 ├── rest/
-│   ├── QuizController.kt         # REST endpoints
-│   └── model/                    # DTOs (QuizDto, AnswerDto, CreateQuiz)
+│   ├── QuizController.kt           # HTTP endpoints
+│   └── model/                      # Request and response DTOs
 ├── service/
-│   ├── QuizService.kt            # Business logic
-│   ├── mapper/                   # Entity/DTO mappers
-│   └── model/
-│       ├── Quiz.kt, Question.kt  # Domain models
-│       └── ai/generated/         # AI-generated DTOs (NewQuiz, NewQuestion, Answer)
-└── shared/
-    └── Option.kt                 # Shared types
+│   ├── QuizService.kt              # Quiz generation and answer workflows
+│   ├── mapper/                     # Domain/entity/DTO mappers
+│   └── model/                      # Domain and AI response models
+└── shared/                         # Shared value types and enums
 ```
 
-## Quick Start
+## Development
 
-1. **Start PostgreSQL** via Docker Compose:
-   ```
-   docker-compose up -d
-   ```
+The application profile expects PostgreSQL and a local OpenAI-compatible model.
+Start PostgreSQL with:
 
-2. **Run the app**:
-   ```
-   gradle bootRun
-   ```
+```powershell
+docker compose up -d
+```
 
-3. **Run tests**:
-   ```
-   gradle test
-   ```
+The configured database is `quizForge` on `localhost:5432` with the credentials
+defined in `docker-compose.yml`. The configured AI endpoint is
+`http://localhost:1234`; update `src/main/resources/application.yaml` if it
+differs in your environment.
 
-4. **Clean build**:
-   ```
-   gradle clean bootJar
-   ```
+Always use the Gradle wrapper rather than a system Gradle installation:
 
-## Key Config
+```powershell
+.\gradlew.bat bootRun
+.\gradlew.bat test
+.\gradlew.bat clean bootJar
+```
 
-- **App config**: `src/main/resources/application.yaml`
-- **Test config**: `src/main/resources/application-test.yaml`
-- **DB migrations**: `src/main/resources/db/changelog/`
-- **Liquibase**: enabled by default (`spring.liquibase.enabled=true`)
+On Unix-like systems, use the equivalent `./gradlew` commands.
 
-## Dependencies
+## Testing
 
-Spring AI dependencies are managed via BOM in `build.gradle.kts` (`springAiVersion = "2.0.0"`):
+`.\gradlew.bat test` is self-contained:
 
-- `spring-ai-vector-store-advisor` — vector store retrieval augmentation
-- `spring-ai-starter-model-openai` — OpenAI chat model adapter
-- `spring-ai-starter-vector-store-pgvector` — PostgreSQL vector store
+- Tests use an in-memory H2 database.
+- Liquibase applies the normal changelog to the test database.
+- AI calls are replaced with deterministic Mockito responses.
+- Docker, PostgreSQL, and a running local LLM are not required.
+
+The main Spring integration tests are `QuizForgeAiApplicationTests` and
+`QuizServiceIT`. Mapper tests are kept under `src/test/kotlin`.
+
+## Configuration and Database
+
+- Application configuration: `src/main/resources/application.yaml`
+- Test configuration: `src/main/resources/application-test.yaml`
+- Liquibase changelog: `src/main/resources/db/changelog/`
+- Build and dependency versions: `build.gradle.kts`
+
+Add database changes through Liquibase rather than relying on Hibernate schema
+generation. Keep production and test schema changes compatible.
 
 ## Conventions
 
-- Use `gradle` directly — the system gradle command is on PATH.
-- Entity/DTO mappers live in `service.mapper` package.
-- Testcontainers PostgreSQL is used for integration tests (`QuizServiceIT`).
-- H2 is the default test database (via `spring-boot-starter-data-jpa` auto-config).
-- Kotlin compiler flags: `-Xjsr305=strict` for null-safety.
+- Keep REST DTOs in `rest.model`, domain models in `service.model`, and persistence
+  models in `persistence.model`.
+- Keep entity/DTO mappers in `service.mapper`.
+- Prefer constructor injection and Kotlin null-safety.
+- Preserve the existing `-Xjsr305=strict` compiler setting.
+- Use `@ActiveProfiles("test")` for Spring tests that need the test database.
+- Mock external AI calls in tests; do not make tests depend on network services.
+- Make focused changes and add or update tests when behavior changes.

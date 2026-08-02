@@ -37,7 +37,6 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-	testImplementation("org.testcontainers:postgresql:1.19.7")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

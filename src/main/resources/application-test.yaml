@@ -7,11 +7,12 @@ spring:
           model: google/gemma-4-e2b
       api-key: "local-llm-no-key-needed"
   datasource:
-    url: jdbc:tc:postgresql:18.3:///ai_project
-    username: ai_user
-    password: ai_password
-    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:h2:mem:quizforge;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.H2Dialect

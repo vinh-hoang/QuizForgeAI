@@ -11,7 +11,6 @@ import ai.quiz.forge.service.model.ai.generated.NewQuestion
 import ai.quiz.forge.shared.Option
 import org.slf4j.LoggerFactory
 import org.springframework.ai.chat.client.ChatClient
-import org.springframework.ai.chat.client.entity
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -77,7 +76,8 @@ class QuizService(
         repeat(5) {
             try {
                 return chatClient.prompt().user(prompt)
-                    .call().entity<NewQuestion>()
+                    .call().entity(NewQuestion::class.java)
+                    ?: throw IllegalStateException("AI returned no quiz question")
             } catch (e: Exception) {
                 log.warn("Error occurred while generating new question",e)
             }
@@ -87,11 +87,9 @@ class QuizService(
 
     @Transactional(readOnly = true)
     fun getQuiz(id: UUID): Quiz =
-        id.run(quizRepository::findById)
-            .orElseThrow {
-                ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz with id $id not found")
-            }
-            .run(QuizEntityToQuizMapper)
+        quizRepository.findWithQuestionsById(id)
+            ?.run(QuizEntityToQuizMapper)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz with id $id not found")
 
     fun answerQuestion(quizId: UUID, selectedOption: Option): Answer {
         val quiz = getQuiz(quizId)
@@ -119,7 +117,8 @@ class QuizService(
     private fun processQuestionAnswer(currentQuestion: Question, selectedOption: Option): Answer {
         val prompt = buildAnswerPrompt(currentQuestion, selectedOption)
         return chatClient.prompt().user(prompt)
-            .call().entity<Answer>()
+            .call().entity(Answer::class.java)
+            ?: throw IllegalStateException("AI returned no quiz answer")
     }
 
     /**
