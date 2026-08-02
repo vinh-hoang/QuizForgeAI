@@ -32,7 +32,7 @@ dependencies {
 	implementation("org.springframework.ai:spring-ai-starter-model-openai")
 	implementation("org.springframework.ai:spring-ai-starter-vector-store-pgvector")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.2")
-	implementation("com.h2database:h2")
+	testRuntimeOnly("com.h2database:h2")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

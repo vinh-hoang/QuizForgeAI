@@ -1,8 +1,7 @@
 package ai.quiz.forge.service
 
 import ai.quiz.forge.rest.model.CreateQuiz
-import ai.quiz.forge.service.model.Question
-import ai.quiz.forge.service.model.Quiz
+import ai.quiz.forge.persistence.repository.QuizRepository
 import ai.quiz.forge.service.model.ai.generated.Answer
 import ai.quiz.forge.service.model.ai.generated.NewQuestion
 import ai.quiz.forge.shared.Option
@@ -28,6 +27,9 @@ class QuizServiceIT {
 
     @Autowired
     lateinit var quizService: QuizService
+
+    @Autowired
+    lateinit var quizRepository: QuizRepository
 
     @MockitoBean
     lateinit var chatClient: ChatClient
@@ -80,57 +82,40 @@ class QuizServiceIT {
             )
         )
 
+        val quizId = requireNotNull(savedQuiz.id)
+        val questionIdsBefore = requireNotNull(quizRepository.findWithQuestionsById(quizId))
+            .questions
+            .map { it.id }
+
         val selectedOption = Option.OPTION_A
-        quizService.answerQuestion(savedQuiz.id!!, selectedOption)
+        quizService.answerQuestion(quizId, selectedOption)
+
+        val questionIdsAfter = requireNotNull(quizRepository.findWithQuestionsById(quizId))
+            .questions
+            .map { it.id }
+        assertEquals(questionIdsBefore, questionIdsAfter)
     }
 
     @Test
     fun `answerQuestion throws forbidden when quiz is already finished`() {
-        // ARRANGE
-        val quizId = UUID.randomUUID()
-        val finishedQuiz = Quiz(
-            id = quizId,
-            topic = "Finished",
-            questions = listOf(
-                Question(
-                    question = "Q1?",
-                    optionA = "A",
-                    optionB = "B",
-                    optionC = "C",
-                    optionD = "D",
-                    hint = "H",
-                ).apply {
-                    // Mark all questions as answered
-                    selectedOption = Option.OPTION_A
-                    correctOption = Option.OPTION_A
-                    explanation = "Done"
-                }
-            )
-        )
-        
-        // Mocking the initial state setup (as above)
-        val failedQuizMocked = Quiz(
-            id = quizId,
-            topic = "Finished",
-            questions = listOf(
-                Question(
-                    question = "Q1?",
-                    optionA = "A",
-                    optionB = "B",
-                    optionC = "C",
-                    optionD = "D",
-                    hint = "H",
-                ).apply { selectedOption = Option.OPTION_A; correctOption = Option.OPTION_A; explanation = "Done" }
+        val savedQuiz = quizService.createQuiz(
+            CreateQuiz(
+                topic = "Animals",
+                numberOfQuestions = CreateQuiz.NumberOfQuestions.FIVE,
+                difficulty = CreateQuiz.Difficulty.BEGINNER,
             )
         )
 
-        // ACT & ASSERT
-        val selectedOption = Option.OPTION_B
-        val ex = assertThrows(ResponseStatusException::class.java) {
-            quizService.answerQuestion(quizId, selectedOption)
+        val quizId = requireNotNull(savedQuiz.id)
+        repeat(savedQuiz.questions.size) {
+            quizService.answerQuestion(quizId, Option.OPTION_A)
         }
 
-        assertEquals(HttpStatus.NOT_FOUND, ex.statusCode)
-        //assertEquals("Quiz already finished", ex.reason)
+        val ex = assertThrows(ResponseStatusException::class.java) {
+            quizService.answerQuestion(quizId, Option.OPTION_B)
+        }
+
+        assertEquals(HttpStatus.FORBIDDEN, ex.statusCode)
+        assertEquals("Quiz already finished", ex.reason)
     }
 }

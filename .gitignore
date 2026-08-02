@@ -1,5 +1,7 @@
 HELP.md
 .gradle
+.gradle-cache/
+.gradle_home/
 build/
 
 # Secrets

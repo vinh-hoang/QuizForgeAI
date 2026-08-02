@@ -3,7 +3,6 @@
 import ai.quiz.forge.persistence.repository.QuizRepository
 import ai.quiz.forge.rest.model.CreateQuiz
 import ai.quiz.forge.service.mapper.QuizEntityToQuizMapper
-import ai.quiz.forge.service.mapper.QuizToQuizEntityMapper
 import ai.quiz.forge.service.model.Question
 import ai.quiz.forge.service.model.Quiz
 import ai.quiz.forge.service.model.ai.generated.Answer
@@ -21,6 +20,7 @@ import java.util.UUID
 class QuizService(
     private val quizRepository: QuizRepository,
     private val chatClient: ChatClient,
+    private val quizPersistenceService: QuizPersistenceService,
 ) {
 
     private companion object {
@@ -69,7 +69,7 @@ class QuizService(
                     hint = it.hint,
                 )
             },
-        ).run(::save)
+        ).run(quizPersistenceService::save)
     }
 
     private fun generateQuestion(prompt: String, questionNumber: Int, totalQuestions: Int): NewQuestion {
@@ -97,16 +97,27 @@ class QuizService(
         /**
          * It seems like the AI should answer each question separately to archive better results.
          **/
-        val currentQuestion = quiz.questions.find { it.selectedOption == null }
-            ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "Quiz already finished")
+        val currentQuestionIndex = quiz.questions.indexOfFirst { it.selectedOption == null }
+        if (currentQuestionIndex < 0) {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Quiz already finished")
+        }
+        val currentQuestion = quiz.questions[currentQuestionIndex]
 
         val aiAnswer = processQuestionAnswer(currentQuestion, selectedOption)
 
-        // Update and save the quiz state
-        currentQuestion.selectedOption = selectedOption
-        currentQuestion.correctOption = aiAnswer.correctOption
-        currentQuestion.explanation = aiAnswer.explanation
-        save(quiz)
+        val updated = quizPersistenceService.answerQuestion(
+            quizId = quizId,
+            position = currentQuestionIndex,
+            selectedOption = selectedOption,
+            correctOption = aiAnswer.correctOption,
+            explanation = aiAnswer.explanation,
+        )
+        if (!updated) {
+            throw ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Question was already answered",
+            )
+        }
 
         return aiAnswer
     }
@@ -138,9 +149,4 @@ class QuizService(
             """.trimIndent()
     }
 
-    @Transactional
-    private fun save(quiz: Quiz): Quiz =
-        quiz.run(QuizToQuizEntityMapper)
-            .run(quizRepository::save)
-            .run(QuizEntityToQuizMapper)
 }
