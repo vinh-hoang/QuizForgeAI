@@ -663,10 +663,15 @@ button:disabled {
 }
 
 .question-layout {
-  display: grid;
-  grid-template-columns: minmax(230px, 0.72fr) minmax(430px, 1.28fr);
-  gap: clamp(48px, 8vw, 130px);
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  align-items: center;
+}
+
+.question-copy {
+  width: min(980px, 100%);
+  text-align: center;
 }
 
 .question-number {
@@ -680,11 +685,11 @@ button:disabled {
 }
 
 .question-copy h1 {
-  max-width: 570px;
+  max-width: 980px;
   margin: 0;
   font-family: Fraunces, Georgia, serif;
-  font-size: 4.2rem;
-  line-height: 1.01;
+  font-size: 2rem;
+  line-height: 1.1;
 }
 
 .hint-button {
@@ -711,7 +716,7 @@ button:disabled {
 
 .hint-panel {
   max-width: 455px;
-  margin-top: 16px;
+  margin: 16px auto 0;
   padding: 13px 15px;
   color: var(--ink);
   background: rgba(244, 207, 98, 0.28);
@@ -722,6 +727,8 @@ button:disabled {
 }
 
 .answer-panel {
+  width: min(960px, 100%);
+  margin: 0 auto;
   padding: 29px;
   background: rgba(255, 253, 248, 0.74);
   border: 1px solid var(--line);
@@ -731,6 +738,7 @@ button:disabled {
 
 .option-list {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -1053,10 +1061,13 @@ button:disabled {
 
 @media (max-width: 920px) {
   .setup-layout,
-  .loading-screen,
-  .question-layout {
+  .loading-screen {
     grid-template-columns: 1fr;
     gap: 38px;
+  }
+
+  .question-layout {
+    gap: 30px;
   }
 
   .setup-copy,
@@ -1066,9 +1077,12 @@ button:disabled {
 
   .setup-copy h1,
   .loading-copy h1,
-  .question-copy h1,
   .review-heading h1 {
     font-size: 3.5rem;
+  }
+
+  .question-copy h1 {
+    font-size: 1.8rem;
   }
 
   .setup-copy h1,
@@ -1085,7 +1099,7 @@ button:disabled {
   }
 
   .question-copy h1 {
-    max-width: 700px;
+    max-width: 760px;
   }
 
   .review-list {
@@ -1124,9 +1138,12 @@ button:disabled {
 
   .setup-copy h1,
   .loading-copy h1,
-  .question-copy h1,
   .review-heading h1 {
     font-size: 2.75rem;
+  }
+
+  .question-copy h1 {
+    font-size: 1.65rem;
   }
 
   .setup-copy::before {
@@ -1138,6 +1155,18 @@ button:disabled {
   .setup-form,
   .answer-panel {
     padding: 19px;
+  }
+
+  .option-button {
+    grid-template-columns: 30px minmax(0, 1fr) 18px;
+    gap: 8px;
+    min-height: 62px;
+    padding: 10px 9px;
+  }
+
+  .option-letter {
+    width: 30px;
+    height: 30px;
   }
 
   .choice-grid,
