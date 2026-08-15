@@ -43,3 +43,7 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+# BMAD personal configuration
+/_bmad/config.user.toml
+/_bmad/custom/*.user.toml
