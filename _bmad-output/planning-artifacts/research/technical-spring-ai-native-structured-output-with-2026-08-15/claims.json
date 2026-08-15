@@ -1,0 +1,22 @@
+[
+  {
+    "claim": "Spring AI 2.0.0 writes response_format and reasoningEffort into the same OpenAI Chat Completions request.",
+    "class": "version-compatibility",
+    "pub_date": "2026-08"
+  },
+  {
+    "claim": "Spring AI 2.0.0 binds spring.ai.openai.chat.reasoning-effort into OpenAiChatOptions.",
+    "class": "configuration",
+    "pub_date": "2026-08"
+  },
+  {
+    "claim": "google/gemma-4-12b returned valid native JSON and reasoning_content locally with reasoning_effort=low when the output budget was sufficient.",
+    "class": "runtime",
+    "pub_date": "2026-08"
+  },
+  {
+    "claim": "The tested local endpoint supports reasoning and native JSON schema together; a 256-token budget can truncate the final JSON after reasoning.",
+    "class": "compatibility",
+    "pub_date": "2026-08"
+  }
+]
