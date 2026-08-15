@@ -1,90 +1,25 @@
-﻿# QuizForgeAI
+﻿<!-- bmad:context -->
+<!-- Verified 2026-08-15 against d55feb1. Managed by bmad-project-context; edits inside this block are replaced on refresh. Keep anything you want preserved outside the markers. -->
 
-Spring Boot and Kotlin application for generating and answering AI-powered quizzes.
+## QuizForgeAI
 
-## Technology
+QuizForgeAI is a full-stack quiz application with a Spring Boot/Kotlin backend and a standalone Vue/Vite/TypeScript frontend. The backend generates and answers quizzes through Spring AI, persists application state with PostgreSQL and Liquibase, and uses H2 plus mocked AI responses in tests. Frontend work lives in `frontend/`; cross-scope API decisions live in `FRONTEND_PLAN.md`, and BMAD planning artifacts live in `_bmad-output/` when present.
 
-- Kotlin 2.3.10
-- Spring Boot 4.0.3
-- Gradle 9.5.1 via the checked-in Gradle wrapper
-- Java 25
-- PostgreSQL with Liquibase in the application environment
-- H2 with Liquibase in tests
-- Spring AI 2.0.0 using an OpenAI-compatible local endpoint
-- Bruno collections in `bruno/quiz/`
+## Where things are
 
-## Repository Layout
+- Backend entry point and HTTP surface: `src/main/kotlin/ai/quiz/forge/QuizForgeAiApplication.kt` and `src/main/kotlin/ai/quiz/forge/rest/QuizController.kt`
+- AI integration and model configuration: `src/main/kotlin/ai/quiz/forge/config/ChatClientConfig.kt` and `src/main/resources/application.yaml`; consult the [Spring AI OpenAI chat reference](https://docs.spring.io/spring-ai/reference/api/chat/openai-chat.html) for AI integration changes
+- Database schema and environment-specific settings: `src/main/resources/db/changelog/`, `src/main/resources/application.yaml`, and `src/main/resources/application-test.yaml`
+- Frontend context: `frontend/AGENTS.md`; shared API decisions: `FRONTEND_PLAN.md`
 
-```text
-src/main/kotlin/ai/quiz/forge/
-├── QuizForgeAiApplication.kt
-├── config/                         # Spring and AI configuration
-├── persistence/
-│   ├── model/                      # JPA entities
-│   └── repository/                 # Spring Data repositories
-├── rest/
-│   ├── QuizController.kt           # HTTP endpoints
-│   └── model/                      # Request and response DTOs
-├── service/
-│   ├── QuizService.kt              # Quiz generation and answer workflows
-│   ├── mapper/                     # Domain/entity/DTO mappers
-│   └── model/                      # Domain and AI response models
-└── shared/                         # Shared value types and enums
-```
+## Running and verifying
 
-## Development
+- Use the checked-in Gradle wrapper for backend tasks: `.\gradlew.bat` on Windows or `./gradlew` on Unix-like systems.
+- Backend tests are self-contained: `.\gradlew.bat test` uses H2, Liquibase, and mocked AI responses, so Docker, PostgreSQL, and a local model are not required.
+- Running the application requires PostgreSQL and an OpenAI-compatible model endpoint configured in `src/main/resources/application.yaml`; the default local database is provided by `docker compose.yml` and the default model endpoint is `http://localhost:1234`.
 
-The application profile expects PostgreSQL and a local OpenAI-compatible model.
-Start PostgreSQL with:
+## Conventions that differ from defaults
 
-```powershell
-docker compose up -d
-```
-
-The configured database is `quizForge` on `localhost:5432` with the credentials
-defined in `docker-compose.yml`. The configured AI endpoint is
-`http://localhost:1234`; update `src/main/resources/application.yaml` if it
-differs in your environment.
-
-Always use the Gradle wrapper rather than a system Gradle installation:
-
-```powershell
-.\gradlew.bat bootRun
-.\gradlew.bat test
-.\gradlew.bat clean bootJar
-```
-
-On Unix-like systems, use the equivalent `./gradlew` commands.
-
-## Testing
-
-`.\gradlew.bat test` is self-contained:
-
-- Tests use an in-memory H2 database.
-- Liquibase applies the normal changelog to the test database.
-- AI calls are replaced with deterministic Mockito responses.
-- Docker, PostgreSQL, and a running local LLM are not required.
-
-The main Spring integration tests are `QuizForgeAiApplicationTests` and
-`QuizServiceIT`. Mapper tests are kept under `src/test/kotlin`.
-
-## Configuration and Database
-
-- Application configuration: `src/main/resources/application.yaml`
-- Test configuration: `src/main/resources/application-test.yaml`
-- Liquibase changelog: `src/main/resources/db/changelog/`
-- Build and dependency versions: `build.gradle.kts`
-
-Add database changes through Liquibase rather than relying on Hibernate schema
-generation. Keep production and test schema changes compatible.
-
-## Conventions
-
-- Keep REST DTOs in `rest.model`, domain models in `service.model`, and persistence
-  models in `persistence.model`.
-- Keep entity/DTO mappers in `service.mapper`.
-- Prefer constructor injection and Kotlin null-safety.
-- Preserve the existing `-Xjsr305=strict` compiler setting.
-- Use `@ActiveProfiles("test")` for Spring tests that need the test database.
-- Mock external AI calls in tests; do not make tests depend on network services.
-- Make focused changes and add or update tests when behavior changes.
+- Add schema changes through Liquibase changesets; Hibernate schema generation is disabled in the application and test profiles.
+- Keep application and test schema changes compatible.
+<!-- /bmad:context -->
