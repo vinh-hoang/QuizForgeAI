@@ -9,25 +9,49 @@ Prerequisites:
 - Podman with a running Podman machine
 - `podman-compose` available on `PATH`
 - An OpenAI-compatible local model endpoint at `http://localhost:1234`
+- Podman machine server 6.1 or newer when using the WSL provider
 
-From the repository root, open PowerShell and run:
+### Upgrade the Podman machine server to 6.1
+
+The Windows Podman CLI and the Podman machine server are upgraded
+separately. To upgrade the server inside the WSL machine, run these commands
+from PowerShell:
+
+```powershell
+podman machine start
+podman machine ssh podman-machine-default 'sudo dnf upgrade -y podman'
+podman machine stop
+podman machine start
+podman version
+```
+
+Confirm that the `Server` section reports version `6.1.x` or newer. The
+machine restart stops running containers; start the database again with
+`podman-compose up -d`.
+
+For Windows WSL, configure the Podman machine to listen on published IPv4
+ports so WSL can forward them to Windows `localhost`. Create
+`%APPDATA%\containers\containers.conf.d\01-podman-wsl-port-forwarding.conf`
+with:
+
+```toml
+[engine]
+force_port_listen = true
+
+[network]
+default_host_ips = ["0.0.0.0"]
+```
+
+Restart the Podman machine after changing this configuration. From the
+repository root, open PowerShell and run:
 
 ```powershell
 podman machine start
 podman-compose up -d
-
-$podmanHost = (wsl -d podman-machine-default ip -4 -o addr show scope global |
-  Select-String -Pattern 'inet (\d{1,3}(\.\d{1,3}){3})/' |
-  ForEach-Object { $_.Matches[0].Groups[1].Value } |
-  Select-Object -First 1)
-
-$env:SPRING_DATASOURCE_URL = "jdbc:postgresql://${podmanHost}:5432/quizForge"
 .\gradlew.bat bootRun
 ```
 
 The backend starts at `http://localhost:8080`.
-
-The Podman machine address is used for PostgreSQL because this Windows WSL setup does not forward the published database port to Windows `localhost`.
 
 ## Stop the backend
 
