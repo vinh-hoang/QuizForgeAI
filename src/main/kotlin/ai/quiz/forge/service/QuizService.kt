@@ -10,6 +10,7 @@ import ai.quiz.forge.service.model.ai.generated.NewQuestion
 import ai.quiz.forge.shared.Option
 import org.slf4j.LoggerFactory
 import org.springframework.ai.chat.client.ChatClient
+import org.springframework.ai.chat.client.ChatClientAttributes
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -75,7 +76,8 @@ class QuizService(
     private fun generateQuestion(prompt: String, questionNumber: Int, totalQuestions: Int): NewQuestion {
         repeat(5) {
             try {
-                return chatClient.prompt().user(prompt)
+                val rawQuestionDraft = generateQuestionDraft(prompt)
+                return chatClient.prompt().user(buildQuestionStructuringPrompt(rawQuestionDraft))
                     .call().entity(NewQuestion::class.java)
                     ?: throw IllegalStateException("AI returned no quiz question")
             } catch (e: Exception) {
@@ -84,6 +86,29 @@ class QuizService(
         }
         throw RuntimeException("Failed to generate question #$questionNumber of $totalQuestions after 5 attempts")
     }
+
+    private fun generateQuestionDraft(prompt: String): String {
+        val rawQuestionDraft = chatClient.prompt()
+            .advisors { advisorSpec ->
+                advisorSpec.param(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.key, false)
+            }
+            .user(prompt)
+            .call()
+            .content()
+            ?: throw IllegalStateException("AI returned no quiz question draft")
+
+        if (rawQuestionDraft.isBlank()) {
+            throw IllegalStateException("AI returned blank quiz question draft")
+        }
+
+        return rawQuestionDraft
+    }
+
+    private fun buildQuestionStructuringPrompt(rawQuestionDraft: String): String =
+        "Convert the quiz draft below into the native NewQuestion schema fields without changing its meaning.\n\n" +
+            "<quiz-question-draft>\n" +
+            rawQuestionDraft +
+            "\n</quiz-question-draft>"
 
     @Transactional(readOnly = true)
     fun getQuiz(id: UUID): Quiz =
