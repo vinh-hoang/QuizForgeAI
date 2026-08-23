@@ -20,7 +20,7 @@ repositories {
 	mavenCentral()
 }
 
-extra["springAiVersion"] = "2.0.0"
+extra["springAiVersion"] = "2.0.1"
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
