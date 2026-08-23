@@ -165,7 +165,7 @@ class QuizServiceIT {
 
     @Test
     fun `createQuiz rejects removed question count values during JSON binding`() {
-        listOf("TE" + "N", "FIF" + "TEEN").forEach { removedValue ->
+        listOf("TEN", "FIFTEEN").forEach { removedValue ->
             val exception = assertThrows(JsonProcessingException::class.java) {
                 objectMapper.readValue(
                     """{"topic":"Animals","numberOfQuestions":"$removedValue","difficulty":"BEGINNER"}""",

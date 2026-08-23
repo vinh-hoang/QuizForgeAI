@@ -71,15 +71,16 @@ context:
 **Commands:**
 - `.\gradlew.bat test --tests "ai.quiz.forge.service.QuizServiceIT" --no-daemon --console=plain` -- expected: focused backend tests pass, including 3/5/7 count coverage.
 - `npm --prefix .\frontend run build` -- expected: TypeScript and Vite build succeed with the updated union/options.
-- `rg -n "TEN|FIFTEEN|10 questions|15 questions|5, 10, and 15" src frontend\src FRONTEND_PLAN.md bruno` -- expected: no stale supported-count references remain.
+- `rg -n "TEN|FIFTEEN|10 questions|15 questions|5, 10, and 15" src\main frontend\src FRONTEND_PLAN.md bruno` -- expected: no stale supported-count references remain in production code or contract documentation; rejection tests may mention removed values explicitly.
 
 **Results (2026-08-23):**
 - Count, removed-value binding, and retry coverage passed with the focused Gradle selectors.
 - The focused `QuizServiceIT` command passed after aligning stale assertions with the current request and prompt behavior; the new count, binding, and retry tests pass.
 - Supported JSON binding is covered for `THREE`, `FIVE`, and `SEVEN`.
 - `npm.cmd --prefix .\frontend run build` passed (PowerShell blocked the `npm` shim by execution policy).
-- The stale-value search returned no matches.
+- The stale-value search returned no matches in production code or contract documentation; removed-value tests explicitly retain `TEN` and `FIFTEEN` as rejection cases.
 - Browser verification confirmed the 3/5/7 labels, `FIVE` default, and matching `THREE`/`FIVE`/`SEVEN` POST payloads.
+- The post-implementation review found no count-logic defects; automated frontend selection coverage is deferred because this repository has no frontend test runner.
 
 ## Suggested Review Order
 
