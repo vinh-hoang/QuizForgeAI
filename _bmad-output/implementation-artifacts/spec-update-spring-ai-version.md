@@ -78,4 +78,4 @@ context:
 ## Suggested Review Order
 
 - The shared property drives every Spring AI module through the imported BOM.
-  [`build.gradle.kts:23`](../../../build.gradle.kts#L23)
+  [`build.gradle.kts:23`](../../build.gradle.kts#L23)
