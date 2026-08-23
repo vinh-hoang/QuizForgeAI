@@ -37,7 +37,7 @@ context:
 
 ## Code Map
 
-- `build.gradle.kts:23` -- the single `springAiVersion` property currently set to `2.0.0`; update this value to the selected stable release.
+- `build.gradle.kts:23` -- the single `springAiVersion` property that was set to `2.0.0`; it is the only dependency version changed by this upgrade.
 - `build.gradle.kts:31-33,43-46` -- Spring AI modules consume the imported BOM, so no individual module versions should be added.
 - `src/main/kotlin/ai/quiz/forge/config/ChatClientConfig.kt:3-20` -- existing `ChatClient` construction and native structured-output advisor; read-only compatibility surface.
 - `src/main/kotlin/ai/quiz/forge/service/QuizService.kt:80-162` -- existing `ChatClient` calls and entity conversion paths; read-only compatibility surface.
@@ -71,11 +71,24 @@ context:
 - Dependency resolution succeeded; the Spring AI components reported by `dependencyInsight` resolve to `2.0.1`.
 - `compileKotlin compileTestKotlin` completed successfully.
 - `test` completed 15 tests with 2 failures: `QuizForgeAiApplicationTests.configuresLowReasoningEffort` and `QuizServiceIT.createQuiz generates draft content then structures it with native output`. Both failures reproduce with `springAiVersion` set back to `2.0.0`; they are baseline failures, not regressions from this upgrade. The first observes `reasoningEffort` as `null` instead of `low`; the second expects `options(...)` interactions that the current service does not make.
+- `bootRun` started successfully with PostgreSQL and PGVector, and `GET /quiz` returned the expected `405 Method Not Allowed` response from the running backend.
 
 **Manual checks (if no CLI):**
 - Inspect the resolved dependency graph and confirm no Spring AI 2.0.0 artifacts remain.
 
 ## Suggested Review Order
 
+**Dependency management**
+
 - The shared property drives every Spring AI module through the imported BOM.
   [`build.gradle.kts:23`](../../build.gradle.kts#L23)
+
+**Runtime verification**
+
+- Startup confirms Spring AI 2.0.1 loads with the existing application wiring.
+  [`spec-update-spring-ai-version.md:69`](spec-update-spring-ai-version.md#L69)
+
+**Deferred coverage**
+
+- The deferred item records provider serialization coverage without adding network-dependent tests.
+  [`deferred-work.md:1`](deferred-work.md#L1)
