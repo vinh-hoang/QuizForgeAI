@@ -146,6 +146,24 @@ class QuizServiceIT {
     }
 
     @Test
+    fun `supported question count values bind from JSON`() {
+        val expectedQuestionCounts = mapOf(
+            "THREE" to CreateQuiz.NumberOfQuestions.THREE,
+            "FIVE" to CreateQuiz.NumberOfQuestions.FIVE,
+            "SEVEN" to CreateQuiz.NumberOfQuestions.SEVEN,
+        )
+
+        expectedQuestionCounts.forEach { (wireValue, expectedValue) ->
+            val request = objectMapper.readValue(
+                """{"topic":"Animals","numberOfQuestions":"$wireValue","difficulty":"BEGINNER"}""",
+                CreateQuiz::class.java,
+            )
+
+            assertEquals(expectedValue, request.numberOfQuestions)
+        }
+    }
+
+    @Test
     fun `createQuiz rejects removed question count values during JSON binding`() {
         listOf("TE" + "N", "FIF" + "TEEN").forEach { removedValue ->
             val exception = assertThrows(JsonProcessingException::class.java) {

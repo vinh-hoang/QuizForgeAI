@@ -95,7 +95,7 @@ frontend/
 
 ## Backend Contract Notes
 
-The frontend will use the existing backend without changing it:
+The frontend uses the existing backend endpoints and their request/response shape:
 
 1. `QuizDto.currentQuestionIndex` is documented as zero-based, but the current mapper returns `currentIndex + 1`. The frontend will treat the received value as one-based for display.
 2. The completed quiz cannot currently be mapped by `GET /quiz/{quizId}` because the mapper requires an unanswered question. The frontend will not fetch the quiz after the final answer; it will use its in-memory answer history for the completion review.
@@ -123,7 +123,7 @@ The frontend will use the existing backend without changing it:
 
 ## Confirmed Interaction Decisions
 
-- Keep the backend unchanged and use the existing three endpoints.
+- Keep the existing three endpoints and their request/response shape while using the updated request contract.
 - After answer submission, show whether the answer was correct, the correct option, and the explanation before allowing the user to continue with a **Next question** action.
 - Use the Vite proxy for local development; no production deployment is planned.
 - Keep quiz generation synchronous and show a loading state while `POST /quiz` is running. Do not implement percentage progress, polling, or server-sent events.

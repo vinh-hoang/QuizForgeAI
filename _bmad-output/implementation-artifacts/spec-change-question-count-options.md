@@ -76,34 +76,46 @@ context:
 **Results (2026-08-23):**
 - Count, removed-value binding, and retry coverage passed with the focused Gradle selectors.
 - The focused `QuizServiceIT` command passed after aligning stale assertions with the current request and prompt behavior; the new count, binding, and retry tests pass.
+- Supported JSON binding is covered for `THREE`, `FIVE`, and `SEVEN`.
 - `npm.cmd --prefix .\frontend run build` passed (PowerShell blocked the `npm` shim by execution policy).
 - The stale-value search returned no matches.
+- Browser verification confirmed the 3/5/7 labels, `FIVE` default, and matching `THREE`/`FIVE`/`SEVEN` POST payloads.
 
 ## Suggested Review Order
 
 **Backend contract and generation**
 
-- Defines the public wire contract for supported session sizes.
+- Replaces the public enum while preserving endpoint shape and the existing retry loop.
   [`CreateQuiz.kt:14`](../../src/main/kotlin/ai/quiz/forge/rest/model/CreateQuiz.kt#L14)
 
-- Converts each API enum value to the exact generation and persistence count.
+- Maps supported enum values to exact generation and persistence totals.
   [`QuizService.kt:32`](../../src/main/kotlin/ai/quiz/forge/service/QuizService.kt#L32)
 
-**Frontend selection**
+**Frontend contract and selection**
 
-- Keeps the TypeScript request union aligned with backend deserialization.
+- Aligns TypeScript wire values with backend deserialization.
   [`quiz.ts:3`](../../frontend/src/types/quiz.ts#L3)
 
-- Renders only the 3, 5, and 7 question choices with matching wire values.
+- Renders only supported labels and emits matching enum values.
   [`QuizSetup.vue:40`](../../frontend/src/components/QuizSetup.vue#L40)
 
-**Verification and shared documentation**
+- Retains `FIVE` as initial state and forwards selection unchanged.
+  [`App.vue:13`](../../frontend/src/App.vue#L13)
 
-- Proves supported counts persist correctly and removed values fail JSON binding.
-  [`QuizServiceIT.kt:137`](../../src/test/kotlin/ai/quiz/forge/service/QuizServiceIT.kt#L137)
+- Serializes the request contract without adding a mapping layer.
+  [`quizApi.ts:33`](../../frontend/src/api/quizApi.ts#L33)
 
-- Documents the updated request values and setup selector choices.
+**Verification and documentation**
+
+- Covers generation, persistence, supported binding, removed binding, and retries.
+  [`QuizServiceIT.kt:126`](../../src/test/kotlin/ai/quiz/forge/service/QuizServiceIT.kt#L126)
+
+- Documents supported values and the unchanged endpoint shape.
   [`FRONTEND_PLAN.md:26`](../../FRONTEND_PLAN.md#L26)
 
-**Manual checks (if no CLI):**
-- Inspect the setup screen and confirm exactly three buttons labeled 3 questions, 5 questions, and 7 questions, with 5 selected initially.
+- Records the unrelated full-suite failure for later repair.
+  [`deferred-work.md:5`](./deferred-work.md#L5)
+
+**Manual checks**
+
+- Browser verification confirms the three labels, `FIVE` default, and matching POST payloads.
