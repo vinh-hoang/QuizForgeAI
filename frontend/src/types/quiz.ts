@@ -1,6 +1,6 @@
 export type Difficulty = 'BEGINNER' | 'ADVANCED' | 'EXPERT'
 
-export type NumberOfQuestions = 'FIVE' | 'TEN' | 'FIFTEEN'
+export type NumberOfQuestions = 'THREE' | 'FIVE' | 'SEVEN'
 
 export type Option = 'OPTION_A' | 'OPTION_B' | 'OPTION_C' | 'OPTION_D'
 

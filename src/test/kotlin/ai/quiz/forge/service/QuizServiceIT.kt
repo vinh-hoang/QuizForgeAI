@@ -5,6 +5,8 @@ import ai.quiz.forge.persistence.repository.QuizRepository
 import ai.quiz.forge.service.model.ai.generated.Answer
 import ai.quiz.forge.service.model.ai.generated.NewQuestion
 import ai.quiz.forge.shared.Option
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -56,6 +58,7 @@ class QuizServiceIT {
     private lateinit var requestSpec: ChatClient.ChatClientRequestSpec
     private lateinit var responseSpec: ChatClient.CallResponseSpec
     private lateinit var advisorSpec: ChatClient.AdvisorSpec
+    private val objectMapper = jacksonObjectMapper()
 
     @BeforeEach
     fun setUpChatClient() {
@@ -128,6 +131,43 @@ class QuizServiceIT {
         assertTrue(structuringPrompt.contains("<quiz-question-draft>\n$questionDraft\n</quiz-question-draft>"))
         assertEquals("What is the largest land animal?", createdQuiz.questions.first().question)
         assertEquals("Elephant", createdQuiz.questions.first().optionA)
+    }
+
+    @Test
+    fun `createQuiz generates and persists the requested question count`() {
+        val expectedQuestionCounts = mapOf(
+            CreateQuiz.NumberOfQuestions.THREE to 3,
+            CreateQuiz.NumberOfQuestions.FIVE to 5,
+            CreateQuiz.NumberOfQuestions.SEVEN to 7,
+        )
+
+        expectedQuestionCounts.forEach { (numberOfQuestions, expectedCount) ->
+            val createdQuiz = quizService.createQuiz(
+                CreateQuiz(
+                    topic = "Animals",
+                    numberOfQuestions = numberOfQuestions,
+                    difficulty = CreateQuiz.Difficulty.BEGINNER,
+                )
+            )
+
+            assertEquals(expectedCount, createdQuiz.questions.size)
+            val persistedQuiz = quizRepository.findWithQuestionsById(requireNotNull(createdQuiz.id))
+            assertEquals(expectedCount, persistedQuiz?.questions?.size)
+        }
+    }
+
+    @Test
+    fun `createQuiz rejects removed question count values during JSON binding`() {
+        listOf("TE" + "N", "FIF" + "TEEN").forEach { removedValue ->
+            val exception = assertThrows(JsonProcessingException::class.java) {
+                objectMapper.readValue(
+                    """{"topic":"Animals","numberOfQuestions":"$removedValue","difficulty":"BEGINNER"}""",
+                    CreateQuiz::class.java,
+                )
+            }
+
+            assertTrue(exception.message?.contains(removedValue) == true)
+        }
     }
 
     @Test

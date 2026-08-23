@@ -25,7 +25,7 @@ The current repository has no frontend code in `src/main/resources/static` or `s
 
 Supported request values:
 
-- `numberOfQuestions`: `FIVE`, `TEN`, `FIFTEEN`
+- `numberOfQuestions`: `THREE`, `FIVE`, `SEVEN`
 - `difficulty`: `BEGINNER`, `ADVANCED`, `EXPERT`
 - `selectedOption`: `OPTION_A`, `OPTION_B`, `OPTION_C`, `OPTION_D`
 
@@ -35,7 +35,7 @@ Supported request values:
 
 - Topic text field with required validation.
 - Difficulty selector with Beginner, Advanced, and Expert choices.
-- Question-count selector with 5, 10, and 15 choices.
+- Question-count selector with 3, 5, and 7 choices.
 - Create button with disabled, loading, and error states.
 
 ### 2. Generation state

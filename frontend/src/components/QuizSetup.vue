@@ -38,9 +38,9 @@ const difficultyOptions: Array<{
 ]
 
 const questionOptions: Array<{ value: NumberOfQuestions; label: string }> = [
+  { value: 'THREE', label: '3 questions' },
   { value: 'FIVE', label: '5 questions' },
-  { value: 'TEN', label: '10 questions' },
-  { value: 'FIFTEEN', label: '15 questions' },
+  { value: 'SEVEN', label: '7 questions' },
 ]
 
 function handleTopicInput(event: Event) {

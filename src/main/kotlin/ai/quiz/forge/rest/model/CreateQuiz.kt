@@ -12,8 +12,8 @@ data class CreateQuiz(
     }
 
     enum class NumberOfQuestions {
+        THREE,
         FIVE,
-        TEN,
-        FIFTEEN
+        SEVEN
     }
 }

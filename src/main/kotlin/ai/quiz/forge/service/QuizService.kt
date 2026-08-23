@@ -30,9 +30,9 @@ class QuizService(
     }
 
     private fun CreateQuiz.NumberOfQuestions.toInt(): Int = when (this) {
+        CreateQuiz.NumberOfQuestions.THREE -> 3
         CreateQuiz.NumberOfQuestions.FIVE -> 5
-        CreateQuiz.NumberOfQuestions.TEN -> 10
-        CreateQuiz.NumberOfQuestions.FIFTEEN -> 15
+        CreateQuiz.NumberOfQuestions.SEVEN -> 7
     }
 
     fun createQuiz(createQuiz: CreateQuiz): Quiz {
