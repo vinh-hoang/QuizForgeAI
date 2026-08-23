@@ -75,7 +75,7 @@ context:
 
 **Results (2026-08-23):**
 - Count, removed-value binding, and retry coverage passed with the focused Gradle selectors.
-- The full `QuizServiceIT` command still has one pre-existing failure in its native-output/options assertion; the new count and binding tests pass.
+- The focused `QuizServiceIT` command passed after aligning stale assertions with the current request and prompt behavior; the new count, binding, and retry tests pass.
 - `npm.cmd --prefix .\frontend run build` passed (PowerShell blocked the `npm` shim by execution policy).
 - The stale-value search returned no matches.
 
