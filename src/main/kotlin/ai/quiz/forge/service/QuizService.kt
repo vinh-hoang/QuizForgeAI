@@ -110,7 +110,7 @@ class QuizService(
     }
 
     private fun buildQuestionStructuringPrompt(rawQuestionDraft: String): String =
-        "You are an Data formatting expert. Convert the quiz draft below into the schema fields.\n\n" +
+        "You are an Data formatting expert. Convert the quiz draft below into the schema fields. The Question field should only contains the Question itself. The Hint field only contains the Hint itself.\n\n" +
                 "<quiz-question-draft>\n" +
                 rawQuestionDraft +
                 "\n</quiz-question-draft>"
@@ -176,6 +176,7 @@ class QuizService(
                 OptionD:${currentQuestion.optionD}.
                 The user selected $selectedOption.
                 Also give an explanation why this is the correctOption. If the user selectedOption is wrong, also add it to the explanation.
+                Keep the explanation concise.
             """.trimIndent()
     }
 
