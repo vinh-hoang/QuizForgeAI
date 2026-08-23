@@ -11,6 +11,7 @@ import ai.quiz.forge.shared.Option
 import org.slf4j.LoggerFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.ChatClientAttributes
+import org.springframework.ai.openai.OpenAiChatOptions
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -43,14 +44,17 @@ class QuizService(
         repeat(totalQuestions) { index ->
             val previousQuestionsPrompt = if (generatedQuestions.isNotEmpty()) {
                 "Do NOT generate questions similar to these:\n" +
-                    generatedQuestions.joinToString("\n") { "- ${it.question}" }
-            } else { "" }
+                        generatedQuestions.joinToString("\n") { "- ${it.question}" }
+            } else {
+                ""
+            }
 
             val prompt = """
                 Create a single quiz question about the topic "$topic" of $difficulty difficulty.
+                Keep the question concise and no longer than 30 words.
                 The question should have exactly 4 answer options and only one correct option.
                 The Hint should help to find the correct option.
-                Do no mistakes.
+                Check if the question makes sense and is free of errors.
                 $previousQuestionsPrompt
             """.trimIndent()
 
@@ -77,11 +81,12 @@ class QuizService(
         repeat(5) {
             try {
                 val rawQuestionDraft = generateQuestionDraft(prompt)
-                return chatClient.prompt().user(buildQuestionStructuringPrompt(rawQuestionDraft))
+                return chatClient.prompt()
+                    .user(buildQuestionStructuringPrompt(rawQuestionDraft))
                     .call().entity(NewQuestion::class.java)
                     ?: throw IllegalStateException("AI returned no quiz question")
             } catch (e: Exception) {
-                log.warn("Error occurred while generating new question",e)
+                log.warn("Error occurred while generating new question", e)
             }
         }
         throw RuntimeException("Failed to generate question #$questionNumber of $totalQuestions after 5 attempts")
@@ -105,10 +110,10 @@ class QuizService(
     }
 
     private fun buildQuestionStructuringPrompt(rawQuestionDraft: String): String =
-        "Convert the quiz draft below into the native NewQuestion schema fields without changing its meaning.\n\n" +
-            "<quiz-question-draft>\n" +
-            rawQuestionDraft +
-            "\n</quiz-question-draft>"
+        "You are an Data formatting expert. Convert the quiz draft below into the schema fields.\n\n" +
+                "<quiz-question-draft>\n" +
+                rawQuestionDraft +
+                "\n</quiz-question-draft>"
 
     @Transactional(readOnly = true)
     fun getQuiz(id: UUID): Quiz =

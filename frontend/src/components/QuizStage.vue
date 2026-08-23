@@ -13,6 +13,7 @@ import {
 } from 'lucide-vue-next'
 import type { AnswerResponse, Option, QuizDto } from '../types/quiz'
 import { optionLabels } from '../types/quiz'
+import MarkdownText from './MarkdownText.vue'
 
 const props = defineProps<{
   answer: AnswerResponse | null
@@ -129,7 +130,7 @@ watch(
               <h3>{{ isCorrect ? 'That one landed.' : 'A useful miss.' }}</h3>
             </div>
           </div>
-          <p class="feedback-explanation">{{ answer.explanation }}</p>
+          <p class="feedback-explanation"><MarkdownText :text="answer.explanation" /></p>
           <p class="correct-answer">
             Correct option:
             <strong>{{ optionLabels[answer.correctOption] }}</strong>

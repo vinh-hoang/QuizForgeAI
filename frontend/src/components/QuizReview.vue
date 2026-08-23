@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { CheckCircle2, RotateCcw, Sparkles, XCircle } from 'lucide-vue-next'
 import type { Option, ReviewItem } from '../types/quiz'
 import { optionLabels } from '../types/quiz'
+import MarkdownText from './MarkdownText.vue'
 
 const props = defineProps<{
   items: ReviewItem[]
@@ -59,7 +60,7 @@ function optionText(item: ReviewItem, option: Option) {
         <p v-if="!item.isCorrect" class="review-answer-line">
           Correct answer: <strong>{{ optionText(item, item.correctOption) }}</strong>
         </p>
-        <p class="review-explanation">{{ item.explanation }}</p>
+        <p class="review-explanation"><MarkdownText :text="item.explanation" /></p>
       </article>
     </div>
 

@@ -22,6 +22,7 @@ import org.springframework.ai.chat.client.ChatClientAttributes
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
+import org.springframework.ai.openai.OpenAiChatOptions
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.server.ResponseStatusException
@@ -67,6 +68,7 @@ class QuizServiceIT {
             invocation.getArgument<Consumer<ChatClient.AdvisorSpec>>(0).accept(advisorSpec)
             requestSpec
         }
+        `when`(requestSpec.options(any<OpenAiChatOptions.Builder>())).thenReturn(requestSpec)
         `when`(requestSpec.user(anyString())).thenReturn(requestSpec)
         `when`(requestSpec.call()).thenReturn(responseSpec)
         `when`(responseSpec.content()).thenReturn(DEFAULT_QUESTION_DRAFT)
@@ -107,11 +109,21 @@ class QuizServiceIT {
         verify(requestSpec, times(10)).call()
         verify(advisorSpec, times(5)).param(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.key, false)
 
+        val optionsCaptor = ArgumentCaptor.forClass(OpenAiChatOptions.Builder::class.java)
+        verify(requestSpec, times(10)).options(optionsCaptor.capture())
+        val draftOptions = optionsCaptor.allValues[0].build()
+        val structuringOptions = optionsCaptor.allValues[1].build()
+        assertEquals(null, draftOptions.reasoningEffort)
+        assertEquals(2048, draftOptions.maxCompletionTokens)
+        assertEquals(null, structuringOptions.reasoningEffort)
+        assertEquals(2048, structuringOptions.maxCompletionTokens)
+
         val promptCaptor = ArgumentCaptor.forClass(String::class.java)
         verify(requestSpec, times(10)).user(promptCaptor.capture())
         val generationPrompt = promptCaptor.allValues[0]
         val structuringPrompt = promptCaptor.allValues[1]
         assertTrue(generationPrompt.contains("Create a single quiz question about the topic \"Animals\""))
+        assertTrue(generationPrompt.contains("Keep the question concise and no longer than 25 words."))
         assertTrue(structuringPrompt.contains("Convert the quiz draft below into the native NewQuestion schema fields"))
         assertTrue(structuringPrompt.contains("<quiz-question-draft>\n$questionDraft\n</quiz-question-draft>"))
         assertEquals("What is the largest land animal?", createdQuiz.questions.first().question)
