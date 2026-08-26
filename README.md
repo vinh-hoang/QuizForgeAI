@@ -20,13 +20,14 @@ separate Python tool and is not required.
 
 The Windows Podman CLI and the Podman machine server are upgraded
 separately. To upgrade the server inside the WSL machine, run these commands
-from PowerShell:
+from PowerShell. The example uses the default machine name; replace it if
+`podman machine list` shows a different name:
 
 ```powershell
-podman machine start
+podman machine start podman-machine-default
 podman machine ssh podman-machine-default 'sudo dnf upgrade -y podman'
-podman machine stop
-podman machine start
+podman machine stop podman-machine-default
+podman machine start podman-machine-default
 podman version
 ```
 
@@ -34,21 +35,18 @@ Confirm that the `Server` section reports version `6.1.x` or newer. The
 machine restart stops running containers; start the database again with
 `podman compose up -d`.
 
-## Podman and WSL distributions
+## Podman WSL localhost setup
 
-Podman Desktop uses its own WSL distribution, `podman-machine-default`, to run
-containers. It is separate from an Ubuntu distribution used as your normal
-Linux shell. Setting Ubuntu as the default WSL distribution changes what plain
-`wsl` opens, but it does not make Podman run inside Ubuntu. Do not unregister
-`podman-machine-default` while using the Windows Podman client.
-
-Use the exact distribution and machine names shown by these commands if yours
-are different:
+Podman Desktop uses its own WSL machine, `podman-machine-default`, to run
+containers. Do not unregister this machine while using the Windows Podman
+client. If your machine has another name, use the name shown by:
 
 ```powershell
-wsl --list --verbose
 podman machine list
 ```
+
+Replace `podman-machine-default` with the actual machine name in the commands
+below if it differs.
 
 For Windows WSL, configure the Podman machine to listen on published IPv4
 ports so WSL can forward them to Windows `localhost`. Create
@@ -63,33 +61,39 @@ force_port_listen = true
 default_host_ips = ["0.0.0.0"]
 ```
 
-If the machine has user-mode networking enabled, disable it for this
-configuration. After changing the networking mode, shut down WSL once so it
-regenerates its networking and DNS state. This stops every running WSL
-distribution, including Ubuntu:
+This bind setting is for WSL port forwarding. Keep this development database
+on a trusted machine and use Windows Firewall rules if external access must be
+restricted.
+
+Create the configuration directory first if it does not exist:
 
 ```powershell
-podman machine stop
+New-Item -ItemType Directory -Force "$env:APPDATA\containers\containers.conf.d" |
+    Out-Null
+```
+
+Open the configuration file in an editor and save the TOML shown above:
+
+```powershell
+notepad "$env:APPDATA\containers\containers.conf.d\01-podman-wsl-port-forwarding.conf"
+```
+
+Run the following sequence after saving the file. It disables user-mode
+networking if enabled, refreshes WSL networking and DNS, and reloads the
+Podman configuration. This stops every running WSL distribution:
+
+```powershell
+podman machine stop podman-machine-default
 podman machine set --user-mode-networking=false podman-machine-default
 wsl --shutdown
-podman machine start
+podman machine start podman-machine-default
 ```
-
-You can make Ubuntu the default WSL distribution independently:
-
-```powershell
-wsl --set-default Ubuntu
-```
-
-Replace `Ubuntu` with the exact distribution name from `wsl --list --verbose`
-when it is versioned, such as `Ubuntu-24.04`.
 
 From the repository root, open PowerShell and run:
 
 ```powershell
-podman machine start
+podman machine start podman-machine-default
 podman compose up -d
-.\gradlew.bat bootRun
 ```
 
 Verify that the database is reachable from Windows before starting the backend:
@@ -98,15 +102,32 @@ Verify that the database is reachable from Windows before starting the backend:
 for ($attempt = 1; $attempt -le 30; $attempt++) {
     podman exec quiz_forge_db pg_isready -U admin -d quizForge *> $null
     if ($LASTEXITCODE -eq 0) { break }
-    if ($attempt -eq 30) { throw "PostgreSQL did not become ready." }
+    if ($attempt -eq 30) {
+        podman compose ps
+        podman compose logs db
+        throw "PostgreSQL did not become ready."
+    }
     Start-Sleep -Seconds 1
 }
-Test-NetConnection 127.0.0.1 -Port 5432
+$databaseConnection = Test-NetConnection 127.0.0.1 -Port 5432 `
+    -WarningAction SilentlyContinue
+if (-not $databaseConnection.TcpTestSucceeded) {
+    podman compose ps
+    podman compose logs db
+    throw "Windows cannot reach PostgreSQL on 127.0.0.1:5432."
+}
+$databaseConnection
 ```
 
 `Test-NetConnection` should report `TcpTestSucceeded : True`. If it reports
 `False`, confirm that the Podman machine is running and that the forwarding
 configuration file exists at the path above.
+
+After the database check succeeds, start the backend:
+
+```powershell
+.\gradlew.bat bootRun
+```
 
 The backend starts at `http://localhost:8080`.
 
