@@ -7,9 +7,14 @@ QuizForgeAI is a Spring Boot/Kotlin backend with a Vue/Vite frontend for creatin
 Prerequisites:
 
 - Podman with a running Podman machine
-- `podman-compose` available on `PATH`
+- A Compose provider available to `podman compose` (verify with
+  `podman compose version`)
 - An OpenAI-compatible local model endpoint at `http://localhost:1234`
 - Podman machine server 6.1 or newer when using the WSL provider
+
+Use `podman compose` (with a space) for this project. It is Podman's
+provider-aware Compose entry point; `podman-compose` (with a hyphen) is a
+separate Python tool and is not required.
 
 ### Upgrade the Podman machine server to 6.1
 
@@ -27,7 +32,7 @@ podman version
 
 Confirm that the `Server` section reports version `6.1.x` or newer. The
 machine restart stops running containers; start the database again with
-`podman-compose up -d`.
+`podman compose up -d`.
 
 For Windows WSL, configure the Podman machine to listen on published IPv4
 ports so WSL can forward them to Windows `localhost`. Create
@@ -47,7 +52,7 @@ repository root, open PowerShell and run:
 
 ```powershell
 podman machine start
-podman-compose up -d
+podman compose up -d
 .\gradlew.bat bootRun
 ```
 
@@ -58,7 +63,7 @@ The backend starts at `http://localhost:8080`.
 Press `Ctrl+C` in the backend terminal, then stop the database container when finished:
 
 ```powershell
-podman-compose down
+podman compose down
 ```
 
 ## Run the frontend
