@@ -43,7 +43,7 @@ class QuizService(
 
         repeat(totalQuestions) { index ->
             val previousQuestionsPrompt = if (generatedQuestions.isNotEmpty()) {
-                "Do NOT generate questions similar to these:\n" +
+                "Do NOT generate a question similar to these:\n" +
                         generatedQuestions.joinToString("\n") { "- ${it.question}" }
             } else {
                 ""
