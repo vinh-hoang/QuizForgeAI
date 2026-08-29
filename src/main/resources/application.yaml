@@ -5,8 +5,8 @@ spring:
     openai:
       base-url: http://localhost:1234/v1
       chat:
-        model: google/gemma-4-e4b
-        timeout: 5m
+        model: google/gemma-4-26b-a4b-qat
+        reasoning-effort: none
       api-key: "local-llm-no-key-needed"
   datasource:
     url: jdbc:postgresql://localhost:5432/quizForge
