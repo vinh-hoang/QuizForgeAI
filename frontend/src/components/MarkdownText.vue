@@ -7,37 +7,29 @@ const props = defineProps<{
 
 interface TextSegment {
   text: string
-  isBold: boolean
+  style: 'plain' | 'bold' | 'italic'
 }
 
 const segments = computed<TextSegment[]>(() => {
   const parsed: TextSegment[] = []
   let cursor = 0
+  const markerPattern = /\*\*([^*]+)\*\*|\*([^*]+)\*/g
+  let match: RegExpExecArray | null
 
-  while (cursor < props.text.length) {
-    const openingMarker = props.text.indexOf('**', cursor)
-
-    if (openingMarker === -1) {
-      parsed.push({ text: props.text.slice(cursor), isBold: false })
-      break
-    }
-
-    const closingMarker = props.text.indexOf('**', openingMarker + 2)
-
-    if (closingMarker === -1) {
-      parsed.push({ text: props.text.slice(cursor), isBold: false })
-      break
-    }
-
-    if (openingMarker > cursor) {
-      parsed.push({ text: props.text.slice(cursor, openingMarker), isBold: false })
+  while ((match = markerPattern.exec(props.text)) !== null) {
+    if (match.index > cursor) {
+      parsed.push({ text: props.text.slice(cursor, match.index), style: 'plain' })
     }
 
     parsed.push({
-      text: props.text.slice(openingMarker + 2, closingMarker),
-      isBold: true,
+      text: match[1] ?? match[2],
+      style: match[1] === undefined ? 'italic' : 'bold',
     })
-    cursor = closingMarker + 2
+    cursor = markerPattern.lastIndex
+  }
+
+  if (cursor < props.text.length) {
+    parsed.push({ text: props.text.slice(cursor), style: 'plain' })
   }
 
   return parsed
@@ -47,7 +39,8 @@ const segments = computed<TextSegment[]>(() => {
 <template>
   <span class="markdown-text">
     <template v-for="(segment, index) in segments" :key="index">
-      <strong v-if="segment.isBold">{{ segment.text }}</strong>
+      <strong v-if="segment.style === 'bold'">{{ segment.text }}</strong>
+      <em v-else-if="segment.style === 'italic'">{{ segment.text }}</em>
       <template v-else>{{ segment.text }}</template>
     </template>
   </span>
