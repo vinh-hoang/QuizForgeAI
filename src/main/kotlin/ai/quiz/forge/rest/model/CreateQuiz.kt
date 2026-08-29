@@ -6,9 +6,9 @@ data class CreateQuiz(
     val difficulty: Difficulty
 ) {
     enum class Difficulty {
-        BEGINNER,
-        ADVANCED,
-        EXPERT
+        EASY,
+        MEDIUM,
+        HARD
     }
 
     enum class NumberOfQuestions {

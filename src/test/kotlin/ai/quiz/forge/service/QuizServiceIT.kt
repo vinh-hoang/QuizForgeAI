@@ -100,7 +100,7 @@ class QuizServiceIT {
             CreateQuiz(
                 topic = "Animals",
                 numberOfQuestions = CreateQuiz.NumberOfQuestions.FIVE,
-                difficulty = CreateQuiz.Difficulty.BEGINNER,
+                difficulty = CreateQuiz.Difficulty.EASY,
             )
         )
 
@@ -116,8 +116,14 @@ class QuizServiceIT {
         val structuringPrompt = promptCaptor.allValues[1]
         assertTrue(generationPrompt.contains("Create a single quiz question about the topic \"Animals\""))
         assertTrue(generationPrompt.contains("Keep the question concise and no longer than 30 words."))
-        assertTrue(structuringPrompt.contains("Convert the quiz draft below into the schema fields"))
-        assertTrue(structuringPrompt.contains("<quiz-question-draft>\n$questionDraft\n</quiz-question-draft>"))
+        assertTrue(generationPrompt.contains("of easy difficulty."))
+        assertTrue(structuringPrompt.contains("Convert the draft below into the NewQuestion schema fields."))
+        assertTrue(structuringPrompt.contains("question: include only the question itself"))
+        assertTrue(structuringPrompt.contains("Do not include a \"Question:\" label, answer choices"))
+        assertTrue(structuringPrompt.contains("Do not duplicate answer choices or hint text in the question field"))
+        assertTrue(structuringPrompt.contains("<quiz-question-draft>"))
+        assertTrue(structuringPrompt.contains(questionDraft))
+        assertTrue(structuringPrompt.contains("</quiz-question-draft>"))
         assertEquals("What is the largest land animal?", createdQuiz.questions.first().question)
         assertEquals("Elephant", createdQuiz.questions.first().optionA)
     }
@@ -135,7 +141,7 @@ class QuizServiceIT {
                 CreateQuiz(
                     topic = "Animals",
                     numberOfQuestions = numberOfQuestions,
-                    difficulty = CreateQuiz.Difficulty.BEGINNER,
+                    difficulty = CreateQuiz.Difficulty.EASY,
                 )
             )
 
@@ -155,7 +161,7 @@ class QuizServiceIT {
 
         expectedQuestionCounts.forEach { (wireValue, expectedValue) ->
             val request = objectMapper.readValue(
-                """{"topic":"Animals","numberOfQuestions":"$wireValue","difficulty":"BEGINNER"}""",
+                """{"topic":"Animals","numberOfQuestions":"$wireValue","difficulty":"EASY"}""",
                 CreateQuiz::class.java,
             )
 
@@ -164,11 +170,43 @@ class QuizServiceIT {
     }
 
     @Test
+    fun `supported difficulty values bind from JSON`() {
+        val expectedDifficulties = mapOf(
+            "EASY" to CreateQuiz.Difficulty.EASY,
+            "MEDIUM" to CreateQuiz.Difficulty.MEDIUM,
+            "HARD" to CreateQuiz.Difficulty.HARD,
+        )
+
+        expectedDifficulties.forEach { (wireValue, expectedValue) ->
+            val request = objectMapper.readValue(
+                """{"topic":"Animals","numberOfQuestions":"FIVE","difficulty":"$wireValue"}""",
+                CreateQuiz::class.java,
+            )
+
+            assertEquals(expectedValue, request.difficulty)
+        }
+    }
+
+    @Test
+    fun `createQuiz rejects removed difficulty values during JSON binding`() {
+        listOf("BEGINNER", "ADVANCED", "EXPERT").forEach { removedValue ->
+            val exception = assertThrows(JsonProcessingException::class.java) {
+                objectMapper.readValue(
+                    """{"topic":"Animals","numberOfQuestions":"FIVE","difficulty":"$removedValue"}""",
+                    CreateQuiz::class.java,
+                )
+            }
+
+            assertTrue(exception.message?.contains(removedValue) == true)
+        }
+    }
+
+    @Test
     fun `createQuiz rejects removed question count values during JSON binding`() {
         listOf("TEN", "FIFTEEN").forEach { removedValue ->
             val exception = assertThrows(JsonProcessingException::class.java) {
                 objectMapper.readValue(
-                    """{"topic":"Animals","numberOfQuestions":"$removedValue","difficulty":"BEGINNER"}""",
+                    """{"topic":"Animals","numberOfQuestions":"$removedValue","difficulty":"EASY"}""",
                     CreateQuiz::class.java,
                 )
             }
@@ -185,7 +223,7 @@ class QuizServiceIT {
             CreateQuiz(
                 topic = "Animals",
                 numberOfQuestions = CreateQuiz.NumberOfQuestions.FIVE,
-                difficulty = CreateQuiz.Difficulty.BEGINNER,
+                difficulty = CreateQuiz.Difficulty.EASY,
             )
         )
 
@@ -201,7 +239,7 @@ class QuizServiceIT {
             CreateQuiz(
                 topic = "Animals",
                 numberOfQuestions = CreateQuiz.NumberOfQuestions.FIVE,
-                difficulty = CreateQuiz.Difficulty.BEGINNER,
+                difficulty = CreateQuiz.Difficulty.EASY,
             )
         )
 
@@ -228,7 +266,7 @@ class QuizServiceIT {
             CreateQuiz(
                 topic = "Animals",
                 numberOfQuestions = CreateQuiz.NumberOfQuestions.FIVE,
-                difficulty = CreateQuiz.Difficulty.BEGINNER,
+                difficulty = CreateQuiz.Difficulty.EASY,
             )
         )
 
@@ -247,7 +285,7 @@ class QuizServiceIT {
                 CreateQuiz(
                     topic = "Animals",
                     numberOfQuestions = CreateQuiz.NumberOfQuestions.FIVE,
-                    difficulty = CreateQuiz.Difficulty.BEGINNER,
+                    difficulty = CreateQuiz.Difficulty.EASY,
                 )
             )
         }
@@ -276,7 +314,7 @@ class QuizServiceIT {
             CreateQuiz(
                 topic = "Animals",
                 numberOfQuestions = CreateQuiz.NumberOfQuestions.FIVE,
-                difficulty = CreateQuiz.Difficulty.BEGINNER
+                difficulty = CreateQuiz.Difficulty.EASY
             )
         )
 
@@ -300,7 +338,7 @@ class QuizServiceIT {
             CreateQuiz(
                 topic = "Animals",
                 numberOfQuestions = CreateQuiz.NumberOfQuestions.FIVE,
-                difficulty = CreateQuiz.Difficulty.BEGINNER,
+                difficulty = CreateQuiz.Difficulty.EASY,
             )
         )
 

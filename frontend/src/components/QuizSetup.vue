@@ -32,9 +32,9 @@ const difficultyOptions: Array<{
   detail: string
   icon: Component
 }> = [
-  { value: 'BEGINNER', label: 'Beginner', detail: 'Warm up', icon: Sprout },
-  { value: 'ADVANCED', label: 'Advanced', detail: 'Stretch out', icon: Gauge },
-  { value: 'EXPERT', label: 'Expert', detail: 'Go deep', icon: Flame },
+  { value: 'EASY', label: 'Easy', detail: 'Build confidence', icon: Sprout },
+  { value: 'MEDIUM', label: 'Medium', detail: 'Find your pace', icon: Gauge },
+  { value: 'HARD', label: 'Hard', detail: 'Push deeper', icon: Flame },
 ]
 
 const questionOptions: Array<{ value: NumberOfQuestions; label: string }> = [

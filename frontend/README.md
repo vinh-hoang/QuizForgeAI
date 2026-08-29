@@ -19,4 +19,7 @@ Open `http://localhost:5173/` in Chrome or Firefox. Vite proxies `/quiz` request
 npm run build
 ```
 
+Question, answer, hint, and explanation text supports LaTeX math using inline
+delimiters such as `$x^2$` or display delimiters such as `$$\frac{a}{b}$$`.
+
 The active quiz and its full answer review are kept in memory for the current session. Refresh recovery, authentication, and quiz history are intentionally out of scope for this version.

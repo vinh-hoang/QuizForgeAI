@@ -53,12 +53,12 @@ function optionText(item: ReviewItem, option: Option) {
             {{ item.isCorrect ? 'Correct' : 'Review' }}
           </span>
         </div>
-        <h2>{{ item.question }}</h2>
+        <h2><MarkdownText :text="item.question" /></h2>
         <p class="review-answer-line">
-          Your answer: <strong>{{ optionText(item, item.selectedOption) }}</strong>
+          Your answer: <strong><MarkdownText :text="optionText(item, item.selectedOption)" /></strong>
         </p>
         <p v-if="!item.isCorrect" class="review-answer-line">
-          Correct answer: <strong>{{ optionText(item, item.correctOption) }}</strong>
+          Correct answer: <strong><MarkdownText :text="optionText(item, item.correctOption)" /></strong>
         </p>
         <p class="review-explanation"><MarkdownText :text="item.explanation" /></p>
       </article>

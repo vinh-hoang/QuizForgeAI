@@ -9,7 +9,7 @@ import { useQuiz } from './composables/useQuiz'
 import type { Difficulty, NumberOfQuestions } from './types/quiz'
 
 const topic = ref('')
-const difficulty = ref<Difficulty>('BEGINNER')
+const difficulty = ref<Difficulty>('EASY')
 const questionCount = ref<NumberOfQuestions>('FIVE')
 
 const {

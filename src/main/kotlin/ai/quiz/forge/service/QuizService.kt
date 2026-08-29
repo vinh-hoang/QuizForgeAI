@@ -110,8 +110,21 @@ class QuizService(
     }
 
     private fun buildQuestionStructuringPrompt(rawQuestionDraft: String): String =
-        "You are an Data formatting expert. Convert the quiz draft below into the schema fields. The Question field should only contains the Question itself. The Hint field only contains the Hint itself.\n\n" +
-                "<quiz-question-draft>\n" +
+        """
+        You are a strict quiz data extraction expert. Convert the draft below into the NewQuestion schema fields.
+
+        Follow these field rules exactly:
+        - question: include only the question itself. Do not include a "Question:" label, answer choices, option labels, a solution, an explanation, or the hint.
+        - optionA, optionB, optionC, optionD: include exactly one answer choice per field. Remove labels such as "A)", "B)", "C)", "D)", "Option A:", or "Option B:".
+        - hint: include only the hint itself. Remove a "Hint:" label and do not include the answer or an explanation.
+        - Do not duplicate answer choices or hint text in the question field.
+        - Preserve necessary wording and any LaTeX math from the draft in the field where it belongs.
+
+        Return only values for the schema fields. Do not add commentary or combine multiple fields.
+
+        <quiz-question-draft>
+        """.trimIndent() +
+                "\n" +
                 rawQuestionDraft +
                 "\n</quiz-question-draft>"
 

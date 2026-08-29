@@ -692,6 +692,23 @@ button:disabled {
   line-height: 1.1;
 }
 
+.markdown-math {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.markdown-math--display {
+  display: block;
+  margin: 0.35em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.markdown-math--display .katex-display {
+  margin: 0;
+}
+
 .hint-button {
   display: inline-flex;
   align-items: center;

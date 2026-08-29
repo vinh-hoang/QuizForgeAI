@@ -1,4 +1,4 @@
-export type Difficulty = 'BEGINNER' | 'ADVANCED' | 'EXPERT'
+export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD'
 
 export type NumberOfQuestions = 'THREE' | 'FIVE' | 'SEVEN'
 

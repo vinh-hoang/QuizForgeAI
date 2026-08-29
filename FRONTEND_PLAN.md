@@ -26,7 +26,7 @@ The current repository has no frontend code in `src/main/resources/static` or `s
 Supported request values:
 
 - `numberOfQuestions`: `THREE`, `FIVE`, `SEVEN`
-- `difficulty`: `BEGINNER`, `ADVANCED`, `EXPERT`
+- `difficulty`: `EASY`, `MEDIUM`, `HARD`
 - `selectedOption`: `OPTION_A`, `OPTION_B`, `OPTION_C`, `OPTION_D`
 
 ## Proposed User Flow
@@ -34,7 +34,7 @@ Supported request values:
 ### 1. Quiz setup
 
 - Topic text field with required validation.
-- Difficulty selector with Beginner, Advanced, and Expert choices.
+- Difficulty selector with Easy, Medium, and Hard choices.
 - Question-count selector with 3, 5, and 7 choices.
 - Create button with disabled, loading, and error states.
 

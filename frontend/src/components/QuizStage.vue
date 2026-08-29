@@ -67,14 +67,14 @@ watch(
     <div class="question-layout">
       <div class="question-copy">
         <span class="question-number">Prompt {{ String(quiz.currentQuestionIndex).padStart(2, '0') }}</span>
-        <h1 id="question-title">{{ quiz.currentQuestion.question }}</h1>
+        <h1 id="question-title"><MarkdownText :text="quiz.currentQuestion.question" /></h1>
         <button class="hint-button" type="button" @click="showHint = !showHint">
           <Lightbulb :size="16" />
           <span>{{ showHint ? 'Hide hint' : 'Show hint' }}</span>
           <ChevronRight :size="14" :class="{ 'hint-arrow-open': showHint }" />
         </button>
         <div v-if="showHint" class="hint-panel">
-          {{ quiz.currentQuestion.hint }}
+          <MarkdownText :text="quiz.currentQuestion.hint" />
         </div>
       </div>
 
@@ -96,7 +96,7 @@ watch(
             @click="emit('select', option.key)"
           >
             <span class="option-letter">{{ option.label }}</span>
-            <span class="option-text">{{ option.text }}</span>
+            <span class="option-text"><MarkdownText :text="option.text" /></span>
             <span class="option-state" aria-hidden="true">
               <Check v-if="answer && option.key === answer.correctOption" :size="17" />
               <X v-else-if="answer && selectedOption === option.key" :size="17" />

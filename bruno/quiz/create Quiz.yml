@@ -14,7 +14,7 @@ http:
     data: |-
       {
         "numberOfQuestions": "FIVE",
-        "difficulty": "BEGINNER",
+        "difficulty": "EASY",
         "topic": "rest api"
       }
   auth: inherit
