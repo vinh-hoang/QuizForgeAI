@@ -21,6 +21,7 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.ChatClientAttributes
+import org.springframework.ai.chat.prompt.ChatOptions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
@@ -66,6 +67,7 @@ class QuizServiceIT {
         advisorSpec = mock(ChatClient.AdvisorSpec::class.java)
 
         `when`(chatClient.prompt()).thenReturn(requestSpec)
+        `when`(requestSpec.options(any<ChatOptions.Builder<*>>())).thenReturn(requestSpec)
         `when`(requestSpec.advisors(any<Consumer<ChatClient.AdvisorSpec>>())).thenAnswer { invocation ->
             invocation.getArgument<Consumer<ChatClient.AdvisorSpec>>(0).accept(advisorSpec)
             requestSpec
@@ -107,6 +109,7 @@ class QuizServiceIT {
         verify(responseSpec, times(5)).content()
         verify(responseSpec, times(5)).entity(NewQuestion::class.java)
         verify(chatClient, times(10)).prompt()
+        verify(requestSpec, times(10)).options(any<ChatOptions.Builder<*>>())
         verify(requestSpec, times(10)).call()
         verify(advisorSpec, times(5)).param(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.key, false)
 

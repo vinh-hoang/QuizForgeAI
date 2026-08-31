@@ -82,6 +82,7 @@ class QuizService(
             try {
                 val rawQuestionDraft = generateQuestionDraft(prompt)
                 return chatClient.prompt()
+                    .options(OpenAiChatOptions.builder().reasoningEffort("none"))
                     .user(buildQuestionStructuringPrompt(rawQuestionDraft))
                     .call().entity(NewQuestion::class.java)
                     ?: throw IllegalStateException("AI returned no quiz question")
@@ -94,6 +95,7 @@ class QuizService(
 
     private fun generateQuestionDraft(prompt: String): String {
         val rawQuestionDraft = chatClient.prompt()
+            .options(OpenAiChatOptions.builder().reasoningEffort("none"))
             .advisors { advisorSpec ->
                 advisorSpec.param(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.key, false)
             }
