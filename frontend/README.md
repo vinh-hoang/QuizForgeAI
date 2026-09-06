@@ -11,12 +11,20 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173/` in Chrome or Firefox. Vite proxies `/quiz` requests to the Spring Boot server, so no frontend CORS configuration is needed for local development.
+Open `http://localhost:5173/` in Chrome or Firefox. Vite proxies `/quiz` requests to the Spring Boot server, so no frontend CORS configuration is needed for local development. The dev server also listens on the LAN for device testing; use it only on a trusted network.
+
+For a deployed frontend, copy `.env.example` to `.env` and set `VITE_API_BASE_URL` to the API origin. If it is omitted, the client uses relative `/quiz` requests.
 
 ## Build
 
 ```powershell
 npm run build
+```
+
+Run the deterministic frontend regression suite with:
+
+```powershell
+npm run test
 ```
 
 Question, answer, hint, and explanation text supports LaTeX math using inline

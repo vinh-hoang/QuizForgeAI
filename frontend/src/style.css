@@ -31,6 +31,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 button,
@@ -405,12 +406,12 @@ button:disabled {
 }
 
 .input-shell input::placeholder {
-  color: #939b94;
+  color: var(--ink-soft);
 }
 
 .char-count {
   flex: none;
-  color: #8b938c;
+  color: var(--ink-soft);
   font-family: 'DM Mono', monospace;
   font-size: 0.62rem;
 }
@@ -440,6 +441,11 @@ button:disabled {
 .choice-card:hover {
   border-color: var(--line-strong);
   transform: translateY(-2px);
+}
+
+.choice-card:focus-within {
+  outline: 3px solid #416fdb;
+  outline-offset: 3px;
 }
 
 .choice-card.selected {
@@ -643,7 +649,7 @@ button:disabled {
 }
 
 .progress-readout span {
-  color: #8b938c;
+  color: var(--ink-soft);
 }
 
 .progress-track {
@@ -690,6 +696,14 @@ button:disabled {
   font-family: Fraunces, Georgia, serif;
   font-size: 2rem;
   line-height: 1.1;
+}
+
+.markdown-text,
+.question-copy h1,
+.loading-copy h1,
+.review-heading h1,
+.review-card h2 {
+  overflow-wrap: anywhere;
 }
 
 .markdown-math {
@@ -765,6 +779,7 @@ button:disabled {
   gap: 12px;
   align-items: center;
   width: 100%;
+  min-width: 0;
   min-height: 67px;
   padding: 11px 14px 11px 11px;
   color: var(--ink);
@@ -817,6 +832,8 @@ button:disabled {
 }
 
 .option-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: 0.85rem;
   font-weight: 600;
   line-height: 1.4;
@@ -909,6 +926,11 @@ button:disabled {
 
 .stage-error {
   margin-top: 14px;
+}
+
+.recovery-button {
+  width: 100%;
+  margin-top: 12px;
 }
 
 /* Review */
@@ -1073,6 +1095,20 @@ button:disabled {
   50% {
     opacity: 1;
     transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition: none !important;
   }
 }
 

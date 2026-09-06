@@ -27,7 +27,7 @@ function optionText(item: ReviewItem, option: Option) {
     <div class="review-heading">
       <div>
         <span class="eyebrow">Session complete / {{ percentage }}% recall</span>
-        <h1 id="review-title">You made it through <em>{{ topic }}.</em></h1>
+        <h1 id="review-title" data-screen-heading tabindex="-1">You made it through <em>{{ topic }}.</em></h1>
       </div>
       <div class="score-stamp" aria-label="Final score">
         <span class="score-number">{{ score }}/{{ items.length }}</span>

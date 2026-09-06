@@ -4,6 +4,9 @@ export type NumberOfQuestions = 'THREE' | 'FIVE' | 'SEVEN'
 
 export type Option = 'OPTION_A' | 'OPTION_B' | 'OPTION_C' | 'OPTION_D'
 
+/** The backend mapper exposes the current question number as one-based. */
+export const QUIZ_INDEX_BASE = 1 as const
+
 export interface CreateQuizRequest {
   topic: string
   numberOfQuestions: NumberOfQuestions
@@ -22,7 +25,7 @@ export interface QuestionDto {
 export interface QuizDto {
   id: string
   questionCount: number
-  /** The current backend mapper sends this as a one-based question number. */
+  /** One-based question number, matching the current backend mapper contract. */
   currentQuestionIndex: number
   currentQuestion: QuestionDto
 }

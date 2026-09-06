@@ -52,7 +52,7 @@ function handleTopicInput(event: Event) {
   <section class="setup-layout" aria-labelledby="setup-title">
     <div class="setup-copy">
       <span class="eyebrow">AI-powered practice lab</span>
-      <h1 id="setup-title">Turn curiosity into <span>momentum.</span></h1>
+      <h1 id="setup-title" data-screen-heading tabindex="-1">Turn curiosity into <span>momentum.</span></h1>
       <p>
         Shape a quick study session around anything you want to understand. Each question is a small step forward.
       </p>

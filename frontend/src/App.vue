@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { BookOpen, Sparkles } from 'lucide-vue-next'
 import LoadingState from './components/LoadingState.vue'
 import QuizReview from './components/QuizReview.vue'
@@ -15,6 +15,7 @@ const questionCount = ref<NumberOfQuestions>('FIVE')
 const {
   answer,
   errorMessage,
+  errorStatus,
   isLoadingNext,
   isSubmitting,
   phase,
@@ -28,6 +29,8 @@ const {
   submitAnswer,
 } = useQuiz()
 
+const isGenerating = computed(() => phase.value === 'generating')
+
 function handleCreate() {
   createQuiz({
     topic: topic.value.trim(),
@@ -38,8 +41,37 @@ function handleCreate() {
 
 function handleNewQuiz() {
   reset()
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+  window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
 }
+
+function focusScreenHeading(root?: Element) {
+  const heading = (root?.querySelector('[data-screen-heading]') ?? document.querySelector('[data-screen-heading]')) as HTMLElement | null
+  heading?.focus({ preventScroll: true })
+}
+
+function handleScreenEnter(element: Element) {
+  focusScreenHeading(element)
+}
+
+watch(
+  () => ({ phase: phase.value, questionIndex: quiz.value?.currentQuestionIndex }),
+  async (current, previous) => {
+    const returnedToQuestion = current.phase === 'question' && previous?.phase === 'feedback'
+    const advancedQuestion =
+      current.phase === 'question' && previous?.phase === 'question' && current.questionIndex !== previous.questionIndex
+
+    if (returnedToQuestion || advancedQuestion) {
+      await nextTick()
+      focusScreenHeading()
+    }
+  },
+)
+
+onMounted(async () => {
+  await nextTick()
+  focusScreenHeading()
+})
 </script>
 
 <template>
@@ -59,12 +91,12 @@ function handleNewQuiz() {
     </header>
 
     <main class="app-main">
-      <Transition name="screen" mode="out-in">
+      <Transition name="screen" mode="out-in" @after-enter="handleScreenEnter">
         <QuizSetup
           v-if="phase === 'setup'"
           :difficulty="difficulty"
           :error="errorMessage"
-          :is-loading="false"
+          :is-loading="isGenerating"
           :question-count="questionCount"
           :topic="topic"
           @create="handleCreate"
@@ -79,12 +111,14 @@ function handleNewQuiz() {
           v-else-if="quiz && (phase === 'question' || phase === 'feedback')"
           :answer="answer"
           :error="errorMessage"
+          :error-status="errorStatus"
           :is-loading-next="isLoadingNext"
           :is-submitting="isSubmitting"
           :quiz="quiz"
           :selected-option="selectedOption"
           :topic="topic"
           @next="nextQuestion"
+          @reset="handleNewQuiz"
           @select="selectOption"
           @submit="submitAnswer"
         />

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import {
   ArrowRight,
   BookOpen,
@@ -18,6 +18,7 @@ import MarkdownText from './MarkdownText.vue'
 const props = defineProps<{
   answer: AnswerResponse | null
   error: string | null
+  errorStatus: number | null
   isLoadingNext: boolean
   isSubmitting: boolean
   quiz: QuizDto
@@ -29,6 +30,7 @@ const emit = defineEmits<{
   (event: 'select', option: Option): void
   (event: 'submit'): void
   (event: 'next'): void
+  (event: 'reset'): void
 }>()
 
 const showHint = ref(false)
@@ -50,6 +52,43 @@ watch(
     showHint.value = false
   },
 )
+
+function handleOptionKeydown(event: KeyboardEvent, option: Option) {
+  if (props.answer || props.isSubmitting) {
+    return
+  }
+
+  const currentIndex = options.value.findIndex((candidate) => candidate.key === option)
+  if (currentIndex < 0) {
+    return
+  }
+
+  let nextIndex: number | null = null
+  if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+    nextIndex = (currentIndex + 1) % options.value.length
+  } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+    nextIndex = (currentIndex - 1 + options.value.length) % options.value.length
+  } else if (event.key === 'Home') {
+    nextIndex = 0
+  } else if (event.key === 'End') {
+    nextIndex = options.value.length - 1
+  }
+
+  if (nextIndex === null) {
+    return
+  }
+
+  event.preventDefault()
+  const nextOption = options.value[nextIndex].key
+  const currentTarget = event.currentTarget as HTMLElement
+  emit('select', nextOption)
+  void nextTick(() => {
+    const optionButton = currentTarget.closest('.option-list')?.querySelector<HTMLElement>(
+      `#option-${nextOption}`,
+    )
+    optionButton?.focus()
+  })
+}
 </script>
 
 <template>
@@ -67,13 +106,20 @@ watch(
     <div class="question-layout">
       <div class="question-copy">
         <span class="question-number">Prompt {{ String(quiz.currentQuestionIndex).padStart(2, '0') }}</span>
-        <h1 id="question-title"><MarkdownText :text="quiz.currentQuestion.question" /></h1>
-        <button class="hint-button" type="button" @click="showHint = !showHint">
+        <h1 id="question-title" data-screen-heading tabindex="-1"><MarkdownText :text="quiz.currentQuestion.question" /></h1>
+        <button
+          id="hint-button"
+          class="hint-button"
+          :aria-controls="'question-hint'"
+          :aria-expanded="showHint"
+          type="button"
+          @click="showHint = !showHint"
+        >
           <Lightbulb :size="16" />
           <span>{{ showHint ? 'Hide hint' : 'Show hint' }}</span>
           <ChevronRight :size="14" :class="{ 'hint-arrow-open': showHint }" />
         </button>
-        <div v-if="showHint" class="hint-panel">
+        <div v-if="showHint" id="question-hint" class="hint-panel" role="region" aria-labelledby="hint-button">
           <MarkdownText :text="quiz.currentQuestion.hint" />
         </div>
       </div>
@@ -81,7 +127,7 @@ watch(
       <div class="answer-panel">
         <div class="option-list" role="radiogroup" aria-label="Answer options">
           <button
-            v-for="option in options"
+            v-for="(option, index) in options"
             :key="option.key"
             class="option-button"
             :class="{
@@ -91,9 +137,12 @@ watch(
             }"
             :aria-checked="selectedOption === option.key"
             :disabled="answer !== null || isSubmitting"
+            :id="`option-${option.key}`"
+            :tabindex="selectedOption === option.key || (!selectedOption && index === 0) ? 0 : -1"
             role="radio"
             type="button"
             @click="emit('select', option.key)"
+            @keydown="handleOptionKeydown($event, option.key)"
           >
             <span class="option-letter">{{ option.label }}</span>
             <span class="option-text"><MarkdownText :text="option.text" /></span>
@@ -147,6 +196,10 @@ watch(
           <span aria-hidden="true">!</span>
           {{ error }}
         </p>
+
+        <button v-if="errorStatus === 409" class="ghost-button recovery-button" type="button" @click="emit('reset')">
+          Start a new quiz
+        </button>
       </div>
     </div>
   </section>

@@ -14,7 +14,7 @@ defineProps<{
 
     <div class="loading-copy">
       <span class="eyebrow">The forge is warming up</span>
-      <h1 id="loading-title">Building a quiz about <em>{{ topic }}.</em></h1>
+      <h1 id="loading-title" data-screen-heading tabindex="-1">Building a quiz about <em>{{ topic }}.</em></h1>
       <p>
         The question set is taking shape now. We are giving each prompt a little room to become useful, not just correct.
       </p>
