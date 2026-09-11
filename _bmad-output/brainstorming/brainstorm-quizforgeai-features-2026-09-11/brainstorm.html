@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QuizForgeAI — Feature Constellation</title>
+  <style>
+    :root { --ink:#162033; --muted:#637083; --paper:#f7f5ef; --card:#fffdf8; --violet:#7057d9; --mint:#57b89d; --orange:#ef9a54; --line:#e5e0d6; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--paper); font:16px/1.55 Inter, ui-sans-serif, system-ui, sans-serif; }
+    main { max-width:1100px; margin:auto; padding:56px 24px 80px; }
+    .eyebrow { color:var(--violet); font-weight:800; letter-spacing:.12em; text-transform:uppercase; font-size:.76rem; }
+    h1 { max-width:760px; margin:10px 0 16px; font-size:clamp(2.4rem,6vw,5.5rem); line-height:.98; letter-spacing:-.06em; }
+    .lead { max-width:720px; color:var(--muted); font-size:1.2rem; }
+    .thesis { margin:42px 0; padding:26px 30px; border:1px solid #d9d1f6; border-radius:24px; background:linear-gradient(135deg,#eeeaff,#f9f8ff); font-size:1.35rem; }
+    h2 { margin:52px 0 18px; font-size:1.8rem; letter-spacing:-.03em; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
+    .card { padding:22px; border:1px solid var(--line); border-radius:18px; background:var(--card); box-shadow:0 8px 24px rgba(41,35,20,.05); }
+    .card h3 { margin:0 0 8px; font-size:1.1rem; }
+    .card p { margin:0; color:var(--muted); }
+    .tag { display:inline-block; margin-bottom:12px; padding:4px 9px; border-radius:999px; background:#e9f6f0; color:#28755e; font-size:.75rem; font-weight:800; }
+    .tag.violet { background:#eeeaff; color:#5942b9; }
+    .tag.orange { background:#fff0e3; color:#a85e20; }
+    .roadmap { display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--line); border-radius:18px; overflow:hidden; }
+    .phase { min-height:210px; padding:22px; background:var(--card); border-right:1px solid var(--line); }
+    .phase:last-child { border-right:0; }
+    .phase strong { display:block; margin-bottom:8px; color:var(--violet); }
+    .phase ul { margin:10px 0 0; padding-left:20px; color:var(--muted); }
+    .callout { margin-top:28px; padding:22px; border-left:5px solid var(--orange); background:#fff7ed; border-radius:10px; }
+    footer { margin-top:54px; color:var(--muted); font-size:.9rem; }
+    @media (max-width:700px) { .roadmap { grid-template-columns:1fr; } .phase { border-right:0; border-bottom:1px solid var(--line); } .phase:last-child { border-bottom:0; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">QuizForgeAI · feature constellation</div>
+    <h1>From quiz generator to learning companion.</h1>
+    <p class="lead">A divergent brainstorm across learning science, trust, collaboration, game design, accessibility, and implementation constraints.</p>
+
+    <div class="thesis"><strong>Core thesis:</strong> the product becomes much more valuable when every answer feeds the next learning action — explain the mistake, calibrate confidence, identify the concept, and schedule the right review.</div>
+
+    <h2>Highest-leverage directions</h2>
+    <section class="grid">
+      <article class="card"><span class="tag">Learning loop</span><h3>Confidence-aware practice</h3><p>Ask how confident the learner is before feedback. Track overconfidence and underconfidence separately from correctness.</p></article>
+      <article class="card"><span class="tag violet">Retention</span><h3>Concept mastery map</h3><p>Replace one final score with a map of concepts: mastered, shaky, unseen, and worth revisiting.</p></article>
+      <article class="card"><span class="tag orange">Trust</span><h3>Source-grounded quizzes</h3><p>Generate from notes, pasted text, URLs, or documents, then show citations and source freshness beside claims.</p></article>
+      <article class="card"><span class="tag">Feedback</span><h3>Misconception repair</h3><p>Explain why each distractor is wrong and follow a wrong answer with a tiny lesson plus one targeted retry.</p></article>
+      <article class="card"><span class="tag violet">Replayability</span><h3>Spaced review</h3><p>Turn weak questions into a daily mix of due reviews, new material, and confidence-calibration challenges.</p></article>
+      <article class="card"><span class="tag orange">Quality</span><h3>Question curation</h3><p>Detect duplicates, flag ambiguity, approve good generated questions, and keep a reusable personal question bank.</p></article>
+    </section>
+
+    <h2>More distinctive bets</h2>
+    <section class="grid">
+      <article class="card"><h3>Teach-back mode</h3><p>After answering, ask the learner to explain the idea in their own words and evaluate the explanation.</p></article>
+      <article class="card"><h3>Scenario mode</h3><p>Test application through realistic decisions rather than only factual recall.</p></article>
+      <article class="card"><h3>Question-type expansion</h3><p>Add ranking, matching, ordering, short answer, and “write the question” modes behind one common model.</p></article>
+      <article class="card"><h3>Daily question mix</h3><p>Generate a short daily session from recent mistakes, due reviews, and one surprising new topic.</p></article>
+      <article class="card"><h3>Teacher and creator workspace</h3><p>Let people edit AI drafts, set learning goals, share links, and review aggregate performance.</p></article>
+      <article class="card"><h3>Co-op challenge rooms</h3><p>Run synchronized rounds for study groups, classrooms, or interview preparation teams.</p></article>
+    </section>
+
+    <h2>Suggested sequence</h2>
+    <section class="roadmap">
+      <div class="phase"><strong>Now · improve the core loop</strong><ul><li>Confidence rating</li><li>Concept tags</li><li>Better distractor explanations</li><li>Post-quiz weak-area recap</li></ul></div>
+      <div class="phase"><strong>Next · make progress persistent</strong><ul><li>Completed-quiz model</li><li>History and resume</li><li>Spaced repetition</li><li>Personal question bank</li></ul></div>
+      <div class="phase"><strong>Later · widen the product</strong><ul><li>Source uploads and citations</li><li>Teacher authoring</li><li>Public sharing and moderation</li><li>Multiplayer rooms</li></ul></div>
+    </section>
+
+    <div class="callout"><strong>Best first bet:</strong> confidence-aware adaptive practice. It creates a visible learning difference with a relatively small extension to the current quiz flow, and it gives later history, mastery, and spaced review features a meaningful data foundation.</div>
+    <footer>Generated from a 150-idea BMad brainstorming session on 2026-09-11. Full session log: .memlog.md</footer>
+  </main>
+</body>
+</html>
