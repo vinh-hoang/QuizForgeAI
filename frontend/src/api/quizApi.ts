@@ -7,6 +7,7 @@ import type {
 import { QUIZ_INDEX_BASE } from '../types/quiz'
 
 export const DEFAULT_REQUEST_TIMEOUT_MS = 15_000
+export const QUIZ_CREATION_TIMEOUT_MS = 5 * 60 * 1000
 
 export type ApiErrorKind = 'http' | 'invalid-request' | 'invalid-response' | 'network' | 'timeout' | 'aborted'
 
@@ -94,6 +95,10 @@ function normalizeTimeout(timeoutMs: number | undefined): number {
   return timeoutMs !== undefined && Number.isFinite(timeoutMs) && timeoutMs > 0
     ? timeoutMs
     : DEFAULT_REQUEST_TIMEOUT_MS
+}
+
+function normalizeQuizCreationTimeout(timeoutMs: number | undefined): number {
+  return Math.max(normalizeTimeout(timeoutMs), QUIZ_CREATION_TIMEOUT_MS)
 }
 
 function encodePathSegment(value: string): string {
@@ -231,7 +236,10 @@ export function createQuiz(payload: CreateQuizRequest, options?: QuizRequestOpti
   return request('/quiz', isQuizDto, {
     method: 'POST',
     body: JSON.stringify(payload),
-  }, options)
+  }, {
+    ...options,
+    timeoutMs: normalizeQuizCreationTimeout(options?.timeoutMs),
+  })
 }
 
 export function getQuiz(quizId: string, options?: QuizRequestOptions): Promise<QuizDto> {

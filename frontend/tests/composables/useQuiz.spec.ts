@@ -138,7 +138,7 @@ describe('useQuiz', () => {
     expect(state.phase.value).toBe('question')
 
     api.createQuiz.mockRejectedValueOnce(
-      new api.ApiError('Request timed out after 15000 ms.', { kind: 'timeout' }),
+      new api.ApiError('Request timed out after 300000 ms.', { kind: 'timeout' }),
     )
     await state.createQuiz(payload)
 

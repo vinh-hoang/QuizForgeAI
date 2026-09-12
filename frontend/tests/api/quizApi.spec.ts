@@ -6,6 +6,7 @@ import {
   createQuiz,
   DEFAULT_REQUEST_TIMEOUT_MS,
   getQuiz,
+  QUIZ_CREATION_TIMEOUT_MS,
 } from '../../src/api/quizApi'
 import type { CreateQuizRequest, QuizDto } from '../../src/types/quiz'
 
@@ -149,12 +150,59 @@ describe('quizApi', () => {
         }),
     )
 
-    const pending = createQuiz(request, { timeoutMs: 1000 })
+    const pending = answerQuestion('quiz-1', 'OPTION_A', { timeoutMs: 1000 })
     const rejection = expect(pending).rejects.toMatchObject({
       kind: 'timeout',
       message: 'Request timed out after 1000 ms.',
     })
     await vi.advanceTimersByTimeAsync(1000)
+
+    await rejection
+  })
+
+  it('allows quiz creation to finish after the former 15-second default', async () => {
+    vi.useFakeTimers()
+    vi.mocked(fetch).mockImplementation(
+      (_input, init) =>
+        new Promise((resolve, reject) => {
+          const timer = setTimeout(() => resolve(jsonResponse(quiz)), DEFAULT_REQUEST_TIMEOUT_MS + 1)
+          init?.signal?.addEventListener('abort', () => {
+            clearTimeout(timer)
+            reject(new DOMException('Aborted', 'AbortError'))
+          }, { once: true })
+        }),
+    )
+
+    let settled = false
+    const pending = createQuiz(request).finally(() => {
+      settled = true
+    })
+
+    await vi.advanceTimersByTimeAsync(DEFAULT_REQUEST_TIMEOUT_MS)
+    expect(settled).toBe(false)
+
+    await vi.advanceTimersByTimeAsync(1)
+    await expect(pending).resolves.toEqual(quiz)
+    expect(QUIZ_CREATION_TIMEOUT_MS).toBe(300_000)
+  })
+
+  it('keeps the five-minute minimum when a creation timeout is too short', async () => {
+    vi.useFakeTimers()
+    vi.mocked(fetch).mockImplementation(
+      (_input, init) =>
+        new Promise((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')))
+        }),
+    )
+
+    const pending = createQuiz(request, { timeoutMs: 1000 })
+    const rejection = expect(pending).rejects.toMatchObject({
+      kind: 'timeout',
+      message: `Request timed out after ${QUIZ_CREATION_TIMEOUT_MS} ms.`,
+    })
+
+    await vi.advanceTimersByTimeAsync(DEFAULT_REQUEST_TIMEOUT_MS)
+    await vi.advanceTimersByTimeAsync(QUIZ_CREATION_TIMEOUT_MS - DEFAULT_REQUEST_TIMEOUT_MS)
 
     await rejection
   })
@@ -168,11 +216,34 @@ describe('quizApi', () => {
         }),
     )
 
-    const pending = createQuiz(request, { timeoutMs })
+    const pending = answerQuestion('quiz-1', 'OPTION_A', { timeoutMs })
     const rejection = expect(pending).rejects.toMatchObject({ kind: 'timeout' })
     await vi.advanceTimersByTimeAsync(DEFAULT_REQUEST_TIMEOUT_MS)
 
     await rejection
+  })
+
+  it('keeps the shorter default timeout for quiz reads and answers', async () => {
+    vi.useFakeTimers()
+    vi.mocked(fetch).mockImplementation(
+      (_input, init) =>
+        new Promise((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')))
+        }),
+    )
+
+    const getRejection = expect(getQuiz('quiz-1')).rejects.toMatchObject({
+      kind: 'timeout',
+      message: `Request timed out after ${DEFAULT_REQUEST_TIMEOUT_MS} ms.`,
+    })
+    const answerRejection = expect(answerQuestion('quiz-1', 'OPTION_A')).rejects.toMatchObject({
+      kind: 'timeout',
+      message: `Request timed out after ${DEFAULT_REQUEST_TIMEOUT_MS} ms.`,
+    })
+
+    await vi.advanceTimersByTimeAsync(DEFAULT_REQUEST_TIMEOUT_MS)
+
+    await Promise.all([getRejection, answerRejection])
   })
 
   it('composes caller cancellation and reports intentional abort separately from timeout', async () => {
