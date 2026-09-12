@@ -138,11 +138,27 @@ describe('useQuiz', () => {
     expect(state.phase.value).toBe('question')
 
     api.createQuiz.mockRejectedValueOnce(
-      new api.ApiError('Request timed out after 300000 ms.', { kind: 'timeout' }),
+      new api.ApiError('Request timed out.', { kind: 'timeout' }),
     )
     await state.createQuiz(payload)
 
     expect(state.phase.value).toBe('setup')
+    expect(state.errorMessage.value).toContain('Check the connection and try again')
+  })
+
+  it('keeps answer submission retryable after a timeout', async () => {
+    api.createQuiz.mockResolvedValue(quiz())
+    api.answerQuestion.mockRejectedValueOnce(
+      new api.ApiError('Request timed out.', { kind: 'timeout' }),
+    )
+
+    const state = useQuiz()
+    await state.createQuiz(payload)
+    state.selectOption('OPTION_A')
+    await state.submitAnswer()
+
+    expect(state.phase.value).toBe('question')
+    expect(state.isSubmitting.value).toBe(false)
     expect(state.errorMessage.value).toContain('Check the connection and try again')
   })
 

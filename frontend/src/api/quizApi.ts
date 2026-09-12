@@ -7,7 +7,8 @@ import type {
 import { QUIZ_INDEX_BASE } from '../types/quiz'
 
 export const DEFAULT_REQUEST_TIMEOUT_MS = 15_000
-export const QUIZ_CREATION_TIMEOUT_MS = 5 * 60 * 1000
+export const QUIZ_CREATION_TIMEOUT_MS = 3 * 60 * 1000
+export const ANSWER_TIMEOUT_MS = 60 * 1000
 
 export type ApiErrorKind = 'http' | 'invalid-request' | 'invalid-response' | 'network' | 'timeout' | 'aborted'
 
@@ -91,14 +92,18 @@ function isAbortError(error: unknown): boolean {
   return error instanceof Error && error.name === 'AbortError'
 }
 
-function normalizeTimeout(timeoutMs: number | undefined): number {
+function normalizeTimeout(timeoutMs: number | undefined, fallback = DEFAULT_REQUEST_TIMEOUT_MS): number {
   return timeoutMs !== undefined && Number.isFinite(timeoutMs) && timeoutMs > 0
     ? timeoutMs
-    : DEFAULT_REQUEST_TIMEOUT_MS
+    : fallback
 }
 
 function normalizeQuizCreationTimeout(timeoutMs: number | undefined): number {
   return Math.max(normalizeTimeout(timeoutMs), QUIZ_CREATION_TIMEOUT_MS)
+}
+
+function normalizeAnswerTimeout(timeoutMs: number | undefined): number {
+  return normalizeTimeout(timeoutMs, ANSWER_TIMEOUT_MS)
 }
 
 function encodePathSegment(value: string): string {
@@ -256,5 +261,8 @@ export function answerQuestion(
   return request(`/quiz/${encodePathSegment(quizId)}/question/current`, isAnswerResponse, {
     method: 'PATCH',
     body: JSON.stringify({ selectedOption }),
-  }, options)
+  }, {
+    ...options,
+    timeoutMs: normalizeAnswerTimeout(options?.timeoutMs),
+  })
 }
