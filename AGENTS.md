@@ -23,11 +23,3 @@ QuizForgeAI is a full-stack quiz application with a Spring Boot/Kotlin backend a
 - Add schema changes through Liquibase changesets; Hibernate schema generation is disabled in the application and test profiles.
 - Keep application and test schema changes compatible.
 <!-- /bmad:context -->
-
-## Copilot subagent model
-
-- Use only `gpt-5.6-luna` with `reasoning_effort: max` for every subagent, including custom agents, review workers, party-mode members, background helpers, and subagents launched by another subagent.
-- For launchers that use display names, `GPT-5.6 Luna (copilot)` is the equivalent model identifier.
-- Pass `model: "gpt-5.6-luna"` and `reasoning_effort: "max"` explicitly whenever the launcher supports both parameters.
-- If the launcher does not support either parameter, or Luna/max is unavailable, stop and report the limitation instead of silently substituting another model or lower effort.
-- A later explicit user request may override this preference.
