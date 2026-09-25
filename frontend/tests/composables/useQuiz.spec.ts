@@ -175,6 +175,19 @@ describe('useQuiz', () => {
     expect(state.isSubmitting.value).toBe(false)
   })
 
+  it('maps a nonviable topic response to recovery guidance', async () => {
+    api.createQuiz.mockRejectedValueOnce(
+      new api.ApiError('Request failed (HTTP 422).', { kind: 'http', status: 422 }),
+    )
+
+    const state = useQuiz()
+    await state.createQuiz({ ...payload, topic: '???' })
+
+    expect(state.phase.value).toBe('setup')
+    expect(state.errorStatus.value).toBe(422)
+    expect(state.errorMessage.value).toBe('Choose a recognizable subject or activity that can support a quiz.')
+  })
+
   it('ignores an answer response after reset and blocks duplicate submits', async () => {
     api.createQuiz.mockResolvedValue(quiz())
     const pending = deferred<AnswerResponse>()

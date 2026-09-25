@@ -51,6 +51,13 @@ function focusScreenHeading(root?: Element) {
 }
 
 function handleScreenEnter(element: Element) {
+  if (phase.value === 'setup' && errorStatus.value === 422) {
+    const topicInput = element.querySelector('#topic') as HTMLInputElement | null
+    topicInput?.focus({ preventScroll: true })
+    topicInput?.select()
+    return
+  }
+
   focusScreenHeading(element)
 }
 

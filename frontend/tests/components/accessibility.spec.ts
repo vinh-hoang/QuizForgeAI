@@ -19,9 +19,9 @@ const quiz: QuizDto = {
   },
 }
 
-function jsonResponse(body: unknown): Response {
+function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
-    status: 200,
+    status,
     headers: { 'Content-Type': 'application/json' },
   })
 }
@@ -66,6 +66,35 @@ describe('frontend accessibility behavior', () => {
     await nextTick()
 
     expect(document.activeElement).toBe(wrapper.get('[data-screen-heading]').element)
+    wrapper.unmount()
+  })
+
+  it('selects a rejected topic for replacement and allows a retry', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ detail: 'The topic is not viable.' }, 422))
+      .mockResolvedValueOnce(jsonResponse(quiz))
+
+    const wrapper = mount(App, {
+      attachTo: document.body,
+      global: { stubs: { transition: false } },
+    })
+    const topicInput = wrapper.get('#topic')
+    await topicInput.setValue('???')
+    await wrapper.get('form').trigger('submit')
+
+    await vi.waitFor(() => expect(wrapper.get('.form-error').text()).toContain('recognizable subject or activity'))
+    const rejectedTopicInput = wrapper.get('#topic')
+    await vi.waitFor(() => expect(document.activeElement).toBe(rejectedTopicInput.element))
+    expect((rejectedTopicInput.element as HTMLInputElement).selectionStart).toBe(0)
+    expect((rejectedTopicInput.element as HTMLInputElement).selectionEnd).toBe(3)
+    expect((rejectedTopicInput.element as HTMLInputElement).value).toBe('???')
+
+    await rejectedTopicInput.setValue('Roman history')
+    await wrapper.get('form').trigger('submit')
+    await vi.waitFor(() => expect(wrapper.get('.quiz-stage').exists()).toBe(true))
+    expect(fetchMock).toHaveBeenCalledTimes(2)
     wrapper.unmount()
   })
 

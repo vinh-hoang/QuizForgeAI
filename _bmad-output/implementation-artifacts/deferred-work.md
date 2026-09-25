@@ -16,3 +16,6 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-harden-frontend-review-findings.md`
   summary: Add CI automation for the frontend test and production build commands.
   evidence: No CI workflow is present in the current repository, and this story verifies the commands locally without introducing repository-wide pipeline policy.
+- source_spec: `_bmad-output/implementation-artifacts/spec-topic-viability-gate.md`
+  summary: Decide whether the backend should enforce the frontend's 80-character quiz-topic limit.
+  evidence: The UI caps topic input at 80 characters, while the existing POST /quiz contract accepts longer strings; changing direct API behavior requires a separate API policy decision.

@@ -117,7 +117,12 @@ export function useQuiz() {
         return
       }
 
-      setError(error, 'The quiz could not be created. Try again.')
+      if (error instanceof ApiError && error.status === 422) {
+        errorStatus.value = error.status
+        errorMessage.value = 'Choose a recognizable subject or activity that can support a quiz.'
+      } else {
+        setError(error, 'The quiz could not be created. Try again.')
+      }
       phase.value = 'setup'
     } finally {
       finishOperation(operation)
