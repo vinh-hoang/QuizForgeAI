@@ -912,18 +912,6 @@ button:disabled {
   line-height: 1.6;
 }
 
-.correct-answer {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin: 13px 0 0 34px;
-  font-size: 0.75rem;
-}
-
-.correct-answer strong {
-  color: var(--ink);
-}
-
 .stage-error {
   margin-top: 14px;
 }

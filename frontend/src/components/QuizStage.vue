@@ -180,10 +180,6 @@ function handleOptionKeydown(event: KeyboardEvent, option: Option) {
             </div>
           </div>
           <p class="feedback-explanation"><MarkdownText :text="answer.explanation" /></p>
-          <p class="correct-answer">
-            Correct option:
-            <strong>{{ optionLabels[answer.correctOption] }}</strong>
-          </p>
         </div>
 
         <button v-if="answer" class="primary-button next-action" :disabled="isLoadingNext" type="button" @click="emit('next')">
