@@ -2,6 +2,8 @@
 
 QuizForgeAI is a Spring Boot/Kotlin backend with a Vue/Vite frontend for creating and answering quizzes.
 
+For the backend quiz creation sequence and persistence flow, see [Quiz generation technical documentation](docs/quiz-generation.md).
+
 ## Start the backend on Windows
 
 Prerequisites:
